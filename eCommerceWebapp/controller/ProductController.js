@@ -25,21 +25,27 @@ export const createProductController = async (req, res) => {
 
     // Validation for required fields
     if (!name || !description || !price || !quantity || !category) {
-      return res.status(400).json({ success: false, message: "All fields required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields required" });
     }
 
     // Validate colors and sizes arrays (optional)
-    const allowedColors = ['red', 'green', 'white', 'black', 'blue'];
-    const allowedSizes = ['s', 'm', 'l', 'xl', 'xxl'];
+    const allowedColors = ["red", "green", "white", "black", "blue"];
+    const allowedSizes = ["s", "m", "l", "xl", "xxl"];
 
     const validColors = colors.every((c) => allowedColors.includes(c));
     const validSizes = sizes.every((s) => allowedSizes.includes(s));
 
     if (!validColors) {
-      return res.status(400).json({ success: false, message: "Invalid color value(s)" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid color value(s)" });
     }
     if (!validSizes) {
-      return res.status(400).json({ success: false, message: "Invalid size value(s)" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid size value(s)" });
     }
 
     const product = new ProductModel({
@@ -52,7 +58,7 @@ export const createProductController = async (req, res) => {
       category,
       colors,
       sizes,
-      imageUrl, 
+      imageUrl,
     });
 
     await product.save();
@@ -76,7 +82,7 @@ export const createProductController = async (req, res) => {
 export const getProductController = async (req, res) => {
   try {
     const products = await ProductModel.find({})
-      
+
       .select("-photo")
       .sort({ createdAt: -1 });
 
@@ -102,11 +108,12 @@ export const getSingleProductBySlugController = async (req, res) => {
     const { slug } = req.params;
 
     const product = await ProductModel.findOne({ slug })
-      
-      .select("-photo");
+    .select("-photo");
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
 
     res.status(200).json({ success: true, product });
@@ -129,7 +136,9 @@ export const productPhotoController = async (req, res) => {
       res.set("Content-Type", product.photo.contentType);
       return res.status(200).send(product.photo.data);
     } else {
-      return res.status(404).json({ success: false, message: "Photo not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Photo not found" });
     }
   } catch (error) {
     console.error("Error fetching photo:", error);
@@ -144,10 +153,14 @@ export const productPhotoController = async (req, res) => {
 // DELETE PRODUCT
 export const deleteProductController = async (req, res) => {
   try {
-    const product = await ProductModel.findByIdAndDelete(req.params.pid).select("-photo");
+    const product = await ProductModel.findByIdAndDelete(req.params.pid).select(
+      "-photo"
+    );
 
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
 
     res.status(200).json({
@@ -165,15 +178,13 @@ export const deleteProductController = async (req, res) => {
   }
 };
 
-
-
-
-
 // GET PRODUCTS BY CATEGORY
 export const getProductsByCategoryController = async (req, res) => {
   try {
     const categoryId = req.params.cid;
-    const products = await ProductModel.find({ category: categoryId }).select("-photo");
+    const products = await ProductModel.find({ category: categoryId }).select(
+      "-photo"
+    );
 
     res.status(200).json({ success: true, products });
   } catch (error) {
@@ -190,10 +201,10 @@ export const getProductsByCategoryController = async (req, res) => {
 export const productFiltersController = async (req, res) => {
   try {
     const {
-      checked = [], 
-      radio = [], 
-      sizes = [], 
-      colors = [], 
+      checked = [],
+      radio = [],
+      sizes = [],
+      colors = [],
       page = 1,
       limit = 12,
     } = req.body;
@@ -201,7 +212,8 @@ export const productFiltersController = async (req, res) => {
     let filterArgs = {};
 
     if (checked.length > 0) filterArgs.category = { $in: checked };
-    if (radio.length === 2) filterArgs.price = { $gte: radio[0], $lte: radio[1] };
+    if (radio.length === 2)
+      filterArgs.price = { $gte: radio[0], $lte: radio[1] };
     if (sizes.length > 0) filterArgs.sizes = { $in: sizes };
     if (colors.length > 0) filterArgs.colors = { $in: colors };
 
@@ -293,7 +305,9 @@ export const getProductByIdController = async (req, res) => {
   try {
     const product = await ProductModel.findById(req.params.pid);
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
     }
     res.status(200).json({ success: true, product });
   } catch (error) {
@@ -302,24 +316,12 @@ export const getProductByIdController = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
 export const updateProductController = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const {
-      name,
-      description,
-      price,
-      quantity,
-      category,
-      shipping,
-    } = req.fields;
+    const { name, description, price, quantity, category, shipping } =
+      req.fields;
 
     let colors = req.fields.colors || [];
     let sizes = req.fields.sizes || [];
@@ -340,15 +342,22 @@ export const updateProductController = async (req, res) => {
     const isValidSizes = sizes.every((s) => allowedSizes.includes(s));
 
     if (!isValidColors) {
-      return res.status(400).json({ success: false, message: "Invalid color values" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid color values" });
     }
     if (!isValidSizes) {
-      return res.status(400).json({ success: false, message: "Invalid size values" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid size values" });
     }
 
     // Find the product
     const product = await ProductModel.findById(id);
-    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+    if (!product)
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
 
     // Update fields
     product.name = name;
