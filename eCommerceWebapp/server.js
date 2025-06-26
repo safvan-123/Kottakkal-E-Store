@@ -22,7 +22,13 @@ connectDB();
 
 // //middleware
 //{ origin: "http://localhost:5173", credentials: true }
-app.use(cors());
+// app.use(cors());
+app.use(
+  cors({
+    origin: ["https://kottakkal-e-store.vercel.app"], // allow your frontend
+    credentials: true, // if using cookies or auth
+  })
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -51,3 +57,5 @@ const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`server running on ${PORT}`);
 });
+
+// https://kottakkal-e-store.onrender.com
