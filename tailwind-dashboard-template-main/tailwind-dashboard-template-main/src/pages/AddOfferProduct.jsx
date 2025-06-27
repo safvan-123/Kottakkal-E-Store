@@ -18,7 +18,7 @@ const AddOfferProduct = () => {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:5050/api/v1/category/get-category"
+          "https://kottakkal-e-store.onrender.com/api/v1/category/get-category"
         );
         console.log(data);
 
@@ -40,7 +40,7 @@ const AddOfferProduct = () => {
       if (!selectedCategory) return;
       try {
         const { data } = await axios.get(
-          `http://localhost:5050/api/v1/product/products-by-category/${selectedCategory}`
+          `https://kottakkal-e-store.onrender.com/api/v1/product/products-by-category/${selectedCategory}`
         );
         //localhost:5050/api/v1/product/products-by-category/685587b3080266fea08b7661
         console.log(data);
@@ -63,7 +63,7 @@ const AddOfferProduct = () => {
     setError(null);
     try {
       await axios.post(
-        "http://localhost:5050/api/offer-products/addoffer-products",
+        "https://kottakkal-e-store.onrender.com/api/offer-products/addoffer-products",
         {
           productId: selectedProduct,
           offerPercentage,

@@ -13,7 +13,7 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5050/api/v1/product/products-by-category/${cid}`
+          `https://kottakkal-e-store.onrender.com/api/v1/product/products-by-category/${cid}`
         );
         if (data?.success) {
           setProducts(data.products);
@@ -26,7 +26,7 @@ const Products = () => {
     const fetchCategory = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5050/api/v1/category/single-category/${cid}`
+          `https://kottakkal-e-store.onrender.com/api/v1/category/single-category/${cid}`
         );
         if (data?.success) {
           setCategory(data.category);
@@ -48,7 +48,7 @@ const Products = () => {
       if (!confirmDelete) return;
 
       const { data } = await axios.delete(
-        `http://localhost:5050/api/v1/product/delete-product/${pid}`
+        `https://kottakkal-e-store.onrender.com/api/v1/product/delete-product/${pid}`
       );
       if (data.success) {
         alert("✅ Product deleted successfully");

@@ -19,7 +19,7 @@ const CreateCategory = () => {
       setLoading(true);
       setMessage(null);
       const { data } = await axios.post(
-        "http://localhost:5050/api/v1/category/create-category",
+        "https://kottakkal-e-store.onrender.com/api/v1/category/create-category",
         { name }
       );
 

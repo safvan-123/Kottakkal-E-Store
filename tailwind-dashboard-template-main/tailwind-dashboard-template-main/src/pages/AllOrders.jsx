@@ -9,7 +9,7 @@ const AllOrders = () => {
   const [error, setError] = useState("");
 
   // Base URL for your API
-  const API_BASE_URL = "http://localhost:5050/api";
+  const API_BASE_URL = "https://kottakkal-e-store.onrender.com/api";
 
   const fetchOrders = async () => {
     try {

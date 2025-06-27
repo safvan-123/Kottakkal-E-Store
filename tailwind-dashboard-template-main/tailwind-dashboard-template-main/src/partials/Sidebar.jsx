@@ -59,7 +59,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
     const fetchCategories = async () => {
       try {
         const { data } = await axios.get(
-          "http://localhost:5050/api/v1/category/get-category"
+          "https://kottakkal-e-store.onrender.com/api/v1/category/get-category"
         );
         console.log("Categories from API:", data);
         if (data.success) {

@@ -27,7 +27,7 @@ const EditProduct = () => {
     const fetchProduct = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5050/api/v1/product/get-product-by-id/${pid}`
+          `https://kottakkal-e-store.onrender.com/api/v1/product/get-product-by-id/${pid}`
         );
 
         if (data?.success) {
@@ -97,7 +97,7 @@ const EditProduct = () => {
       }
 
       const { data } = await axios.put(
-        `http://localhost:5050/api/v1/product/update-product/${pid}`,
+        `https://kottakkal-e-store.onrender.com/api/v1/product/update-product/${pid}`,
         formData,
         {
           headers: {

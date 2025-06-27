@@ -15,7 +15,7 @@ const AllUsers = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        "http://localhost:5050/api/v1/user/all-users"
+        "https://kottakkal-e-store.onrender.com/api/v1/user/all-users"
       );
       if (data?.success) {
         setUsers(data.users);
@@ -49,9 +49,12 @@ const AllUsers = () => {
   const handleRoleChange = async (id, currentRole) => {
     const newRole = currentRole === 1 ? 0 : 1;
     try {
-      await axios.put(`http://localhost:5050/api/v1/user/update-role/${id}`, {
-        role: newRole,
-      });
+      await axios.put(
+        `https://kottakkal-e-store.onrender.com/api/v1/user/update-role/${id}`,
+        {
+          role: newRole,
+        }
+      );
       fetchUsers();
     } catch (err) {
       alert("Failed to update role");
@@ -61,7 +64,9 @@ const AllUsers = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
-        await axios.delete(`http://localhost:5050/api/v1/user/delete/${id}`);
+        await axios.delete(
+          `https://kottakkal-e-store.onrender.com/api/v1/user/delete/${id}`
+        );
         fetchUsers();
         if (selectedUser?._id === id) setSelectedUser(null);
       } catch (err) {
@@ -72,7 +77,9 @@ const AllUsers = () => {
 
   const handleToggleBlock = async (id) => {
     try {
-      await axios.put(`http://localhost:5050/api/v1/user/toggle-block/${id}`);
+      await axios.put(
+        `https://kottakkal-e-store.onrender.com/api/v1/user/toggle-block/${id}`
+      );
       fetchUsers();
     } catch (err) {
       alert("Failed to toggle block status");

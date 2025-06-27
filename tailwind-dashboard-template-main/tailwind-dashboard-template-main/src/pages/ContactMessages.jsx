@@ -13,7 +13,9 @@ const AllContacts = () => {
   const fetchContacts = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get("http://localhost:5050/api/contact");
+      const { data } = await axios.get(
+        "https://kottakkal-e-store.onrender.com/api/contact"
+      );
       if (data?.success) {
         setContacts(data.contacts);
         setFilteredContacts(data.contacts);
