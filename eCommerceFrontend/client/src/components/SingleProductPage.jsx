@@ -17,7 +17,7 @@ import {
 import { toast } from "react-toastify";
 import { useWishlist } from "../context/WishlistContext";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/product";
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api/v1/product`;
 
 const SingleProductPage = () => {
   const { productId } = useParams();

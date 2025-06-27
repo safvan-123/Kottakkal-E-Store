@@ -19,11 +19,14 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const res = await fetch("http://localhost:5050/api/v1/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/api/v1/auth/register`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      }
+    );
 
     const data = await res.json();
     if (res.ok) {

@@ -39,7 +39,7 @@ export const WishlistProvider = ({ children }) => {
           },
         };
         const response = await axios.get(
-          "http://localhost:5050/api/v1/wishlist",
+          `${import.meta.env.VITE_API_URL}/api/v1/wishlist`,
           config
         );
         setWishlist(response.data.wishlist.products || []);
@@ -81,7 +81,7 @@ export const WishlistProvider = ({ children }) => {
         },
       };
       const response = await axios.post(
-        "http://localhost:5050/api/v1/wishlist",
+        `${import.meta.env.VITE_API_URL}/api/v1/wishlist`,
         { productId: product._id },
         config
       );
@@ -109,7 +109,7 @@ export const WishlistProvider = ({ children }) => {
         },
       };
       const response = await axios.delete(
-        `http://localhost:5050/api/v1/wishlist/${productId}`,
+        `${import.meta.env.VITE_API_URL}/api/v1/wishlist/${productId}`,
         config
       );
       setWishlist(response.data.wishlist.products);

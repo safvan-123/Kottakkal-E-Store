@@ -24,11 +24,14 @@ const MyOrdersPage = () => {
 
     const fetchOrders = async () => {
       try {
-        const res = await fetch("http://localhost:5050/api/orders/my-orders", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/orders/my-orders`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await res.json();
         if (data.success) {
           setOrders(data.orders);

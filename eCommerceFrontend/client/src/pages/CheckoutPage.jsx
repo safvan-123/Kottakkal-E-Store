@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const API_BASE_URL = "http://localhost:5050";
+const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
 
 const CheckoutPage = () => {
   const { cartItems, cartTotal, clearCart } = useCart();
@@ -31,7 +31,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     if (currentStep === 2 || currentStep === 3) {
       const script = document.createElement("script");
-      script.src = "http://localhost:5050/v1/checkout.js";
+      script.src = `${import.meta.env.VITE_API_URL}/v1/checkout.js`;
       script.async = true;
       script.onload = () => {
         console.log("Razorpay SDK loaded");
@@ -62,7 +62,7 @@ const CheckoutPage = () => {
       setLoadingPincode(true);
       try {
         const response = await fetch(
-          `http://localhost:5050/pincode/${newPincode}`
+          `${import.meta.env.VITE_API_URL}/pincode/${newPincode}`
         );
         const data = await response.json();
         console.log(data[0].PostOffice);

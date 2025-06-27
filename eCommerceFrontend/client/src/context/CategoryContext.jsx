@@ -9,7 +9,7 @@ export const CategoryProvider = ({ children }) => {
   const fetchCategories = async () => {
     try {
       const { data } = await axios.get(
-        "http://localhost:5050/api/v1/Category/get-category"
+        `${import.meta.env.VITE_API_URL}/api/v1/Category/get-category`
       );
       setCategories(data.category || []);
     } catch (error) {

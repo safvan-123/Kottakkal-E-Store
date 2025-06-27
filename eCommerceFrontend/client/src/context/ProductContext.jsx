@@ -24,7 +24,7 @@ export const ProductProvider = ({ children }) => {
 
       // Fetch Offer Products
       const offerResponse = await axios.get(
-        "http://localhost:5050/api/offer-products/getoffer-products"
+        `${import.meta.env.VITE_API_URL}/api/offer-products/getoffer-products`
       );
 
       setOfferProducts(
@@ -33,7 +33,7 @@ export const ProductProvider = ({ children }) => {
 
       // Fetch All Products
       const allProductsResponse = await axios.get(
-        "http://localhost:5050/api/v1/product/get-product"
+        `${import.meta.env.VITE_API_URL}/api/v1/product/get-product`
       );
 
       if (

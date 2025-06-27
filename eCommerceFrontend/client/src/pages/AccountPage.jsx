@@ -36,7 +36,7 @@ export default function Account() {
       };
 
       const res = await fetch(
-        "http://localhost:5050/api/v1/auth/update-profile",
+        `${import.meta.env.VITE_API_URL}/api/v1/auth/update-profile`,
         {
           method: "PUT",
           headers: {

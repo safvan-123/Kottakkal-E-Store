@@ -26,7 +26,7 @@ const PaymentCompletePage = () => {
       const confirmOnlinePayment = async () => {
         try {
           const response = await axios.post(
-            `http://localhost:5050/order/confirm-payment/${orderId}`,
+            `${import.meta.env.VITE_API_URL}/order/confirm-payment/${orderId}`,
             {
               paymentStatus: "Paid",
             },
