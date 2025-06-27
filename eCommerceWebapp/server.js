@@ -23,12 +23,26 @@ connectDB();
 // //middleware
 //{ origin: "http://localhost:5173", credentials: true }
 // app.use(cors());
+// app.use(
+//   cors({
+//     origin: ["https://kottakkal-e-store.vercel.app"], // allow your frontend
+//     credentials: true, // if using cookies or auth
+//   })
+// );
+const allowedOrigins = [
+  "http://localhost:5174",
+  "http://localhost:5173",
+  "https://kottakkal-e-store.vercel.app", // your Vercel frontend (if deployed)
+];
+
 app.use(
   cors({
-    origin: ["https://kottakkal-e-store.vercel.app"], // allow your frontend
-    credentials: true, // if using cookies or auth
+    origin: allowedOrigins,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
   })
 );
+// app.options("*", cors());
 app.use(express.json());
 app.use(morgan("dev"));
 
