@@ -1,4 +1,4 @@
-import Address from "../models/address";
+import Address from "../models/address.js";
 
 export const saveOrUpdateAddress = async (req, res) => {
   try {
