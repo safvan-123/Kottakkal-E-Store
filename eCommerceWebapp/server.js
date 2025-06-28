@@ -32,7 +32,8 @@ connectDB();
 const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5173",
-  "https://kottakkal-e-store.vercel.app", // your Vercel frontend (if deployed)
+  "https://kottakkal-e-store.vercel.app",
+  "https://kottakkal-e-store-admin.vercel.app", // your Vercel frontend (if deployed)
 ];
 
 app.use(
