@@ -14,7 +14,15 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
   // console.log(cartItems);
+  // const [selectedaddress, setselectedAddress] = useState({});
+  const [selected, setSelected] = useState(false);
   const [savedData, setsavedData] = useState({});
+  const handleClick = () => {
+    setSelected((prev) => !prev); // Toggle checked state
+    // setselectedAddress(savedData);
+  };
+
+  console.log(savedData);
   const [address, setAddress] = useState({
     name: "",
     phone: "",
@@ -24,6 +32,7 @@ const CheckoutPage = () => {
     city: "",
     pincode: "",
   });
+  console.log(savedData);
 
   const [locationDetails, setLocationDetails] = useState(null);
   const [pincodeError, setPincodeError] = useState("");
@@ -47,6 +56,9 @@ const CheckoutPage = () => {
       };
     }
   }, [currentStep]);
+  useEffect(() => {
+    setsavedData({});
+  }, []);
 
   const formatPrice = (amount) =>
     new Intl.NumberFormat("en-IN", {
@@ -383,49 +395,74 @@ const CheckoutPage = () => {
         {/* Left Section: Steps & Content */}
         <div className="lg:col-span-2 p-8 md:p-12 border-r border-gray-100">
           {savedData ? (
-            <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-semibold text-gray-800">
-                  {savedData
-                    ? `Delivering to ${savedData?.fullName}`
-                    : "Fetching savedData..."}
+            <div
+              className="max-w-3xl mx-auto bg-white rounded-xl p-4 border border-white hover:border-transparent"
+              style={{ marginBottom: "40px" }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  Choose Delivery Address
                 </h2>
                 <button
-                  className="text-blue-600 hover:underline text-base"
+                  className="text-blue-600  text-sm"
                   onClick={() => navigate("/address")}
                 >
-                  Edit
+                  Change Address
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-                <p>
-                  <span className="font-medium">Full Name:</span>{" "}
-                  {savedData?.fullName}
-                </p>
-                <p>
-                  <span className="font-medium">Phone:</span> {savedData?.phone}
-                </p>
-                <p>
-                  <span className="font-medium">Alt Phone:</span>{" "}
-                  {savedData?.altPhone}
-                </p>
-                <p>
-                  <span className="font-medium">Landmark:</span>{" "}
-                  {savedData?.landmark}
-                </p>
-                <p className="md:col-span-2">
-                  <span className="font-medium">Full savedData?:</span>{" "}
-                  {savedData?.fullAddress}
-                </p>
-                <p>
-                  <span className="font-medium">City:</span>
-                  {savedData?.city}
-                </p>
-                <p>
-                  <span className="font-medium">Pincode:</span>{" "}
-                  {savedData?.pincode}
-                </p>
+              {/* Radio Button Section */}
+              <div className="w-full">
+                <label className="flex flex-col gap-3 p-3 border border-gray-300 rounded-lg hover:border-gray-400 cursor-pointer transition w-full h-full">
+                  <div className="flex flex-col md:flex-row gap-3">
+                    <input
+                      type="radio"
+                      name="deliveryAddress"
+                      checked={selected}
+                      onClick={handleClick}
+                      className="w-4 h-4 text-indigo-600"
+                    />
+                    {/* Left Section */}
+                    <div className="w-full md:w-1/2 bg-gray-50 p-2 rounded-lg shadow-sm">
+                      <div className="text-gray-700 space-y-1 text-sm">
+                        <p>
+                          <span className="font-medium">Full Name:</span>{" "}
+                          {savedData?.fullName}
+                        </p>
+                        <p>
+                          <span className="font-medium">Phone:</span>{" "}
+                          {savedData?.phone}
+                        </p>
+                        <p>
+                          <span className="font-medium">Alt Phone:</span>{" "}
+                          {savedData?.altPhone}
+                        </p>
+                        <p>
+                          <span className="font-medium">Landmark:</span>{" "}
+                          {savedData?.landmark}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Right Section */}
+                    <div className="w-full md:w-1/2 bg-gray-50 p-2 rounded-lg shadow-sm">
+                      <div className="text-gray-700 space-y-1 text-sm">
+                        <p>
+                          <span className="font-medium">Address:</span>{" "}
+                          {savedData?.fullAddress}
+                        </p>
+                        <p>
+                          <span className="font-medium">City:</span>{" "}
+                          {savedData?.city}
+                        </p>
+                        <p>
+                          <span className="font-medium">Pincode:</span>{" "}
+                          {savedData?.pincode}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </label>
               </div>
             </div>
           ) : (
@@ -450,6 +487,7 @@ const CheckoutPage = () => {
             </div>
           )}
 
+          {/* </div> */}
           <h1 className="text-4xl font-extrabold text-gray-900 mb-10 text-center">
             Your Order Checkout
           </h1>
@@ -508,7 +546,7 @@ const CheckoutPage = () => {
                   <input
                     className="input-field p-3 border border-gray-300 rounded-md "
                     placeholder="Full Name (Required)"
-                    value={address.name}
+                    defaultValue={selected == true ? savedData?.fullName : ""}
                     onChange={(e) =>
                       setAddress({ ...address, name: e.target.value })
                     }
@@ -517,7 +555,7 @@ const CheckoutPage = () => {
                   <input
                     className="input-field p-3 border border-gray-300 rounded-md "
                     placeholder="Phone Number (Required)"
-                    value={address.phone}
+                    defaultValue={selected == true ? savedData?.phone : ""}
                     onChange={(e) =>
                       setAddress({ ...address, phone: e.target.value })
                     }
@@ -527,7 +565,7 @@ const CheckoutPage = () => {
                   <input
                     className="input-field p-3 border border-gray-300 rounded-md "
                     placeholder="Alternate Phone (Optional)"
-                    value={address.altPhone}
+                    defaultValue={selected == true ? savedData?.altPhone : ""}
                     onChange={(e) =>
                       setAddress({ ...address, altPhone: e.target.value })
                     }
@@ -536,7 +574,7 @@ const CheckoutPage = () => {
                   <input
                     className="input-field p-3 border border-gray-300 rounded-md "
                     placeholder="Landmark (e.g., Near City Hospital)"
-                    value={address.landmark}
+                    defaultValue={selected == true ? savedData?.landmark : ""}
                     onChange={(e) =>
                       setAddress({ ...address, landmark: e.target.value })
                     }
@@ -544,7 +582,9 @@ const CheckoutPage = () => {
                   <input
                     className="input-field col-span-full p-4 border border-gray-300 rounded-md "
                     placeholder="Full Address (House No., Building Name, Street, Locality - Required)"
-                    value={address.addressLine}
+                    defaultValue={
+                      selected == true ? savedData?.fullAddress : ""
+                    }
                     onChange={(e) =>
                       setAddress({ ...address, addressLine: e.target.value })
                     }
@@ -554,7 +594,7 @@ const CheckoutPage = () => {
                     <input
                       className="input-field pr-10 p-3 border border-gray-300 rounded-md "
                       placeholder="Pincode (Required)"
-                      value={address.pincode}
+                      defaultValue={selected == true ? savedData?.pincode : ""}
                       onChange={handlePincodeChange}
                       maxLength="6"
                       required
@@ -591,7 +631,11 @@ const CheckoutPage = () => {
                         : ""
                     } border border-gray-300 rounded-md p-3`}
                     placeholder="City (Auto-filled or Manual)"
-                    value={locationDetails?.district || address.city || ""}
+                    defaultValue={
+                      selected == true
+                        ? locationDetails?.district || savedData.city
+                        : ""
+                    }
                     onChange={(e) =>
                       setAddress({ ...address, city: e.target.value })
                     }
