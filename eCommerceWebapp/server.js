@@ -14,6 +14,7 @@ import wishlistRoutes from "./routes/wishlistRoutes.js";
 import adminOrderRoutes from "./routes/adminOrderRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import pincodeRoutes from "./routes/pincodeRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ app.use("/api/v1/wishlist", wishlistRoutes);
 app.use("/api/orders", adminOrderRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/pincode", pincodeRoutes);
+app.use("/api/v1/address", addressRoutes);
 
 //rest api
 
