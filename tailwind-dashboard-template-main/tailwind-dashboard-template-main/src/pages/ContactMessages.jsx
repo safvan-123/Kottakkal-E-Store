@@ -14,7 +14,7 @@ const AllContacts = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        "https://kottakkal-e-store.onrender.com/api/contact"
+        `${import.meta.env.VITE_API_URL}/api/contact`
       );
       if (data?.success) {
         setContacts(data.contacts);

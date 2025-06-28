@@ -15,7 +15,7 @@ const AllUsers = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        "https://kottakkal-e-store.onrender.com/api/v1/user/all-users"
+        `${import.meta.env.VITE_API_URL}/api/v1/user/all-users`
       );
       if (data?.success) {
         setUsers(data.users);
@@ -50,7 +50,7 @@ const AllUsers = () => {
     const newRole = currentRole === 1 ? 0 : 1;
     try {
       await axios.put(
-        `https://kottakkal-e-store.onrender.com/api/v1/user/update-role/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/v1/user/update-role/${id}`,
         {
           role: newRole,
         }
@@ -65,7 +65,7 @@ const AllUsers = () => {
     if (window.confirm("Are you sure you want to delete this user?")) {
       try {
         await axios.delete(
-          `https://kottakkal-e-store.onrender.com/api/v1/user/delete/${id}`
+          `${import.meta.env.VITE_API_URL}/api/v1/user/delete/${id}`
         );
         fetchUsers();
         if (selectedUser?._id === id) setSelectedUser(null);
@@ -78,7 +78,7 @@ const AllUsers = () => {
   const handleToggleBlock = async (id) => {
     try {
       await axios.put(
-        `https://kottakkal-e-store.onrender.com/api/v1/user/toggle-block/${id}`
+        `${import.meta.env.VITE_API_URL}/api/v1/user/toggle-block/${id}`
       );
       fetchUsers();
     } catch (err) {

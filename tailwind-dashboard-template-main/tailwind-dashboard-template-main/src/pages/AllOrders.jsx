@@ -9,7 +9,7 @@ const AllOrders = () => {
   const [error, setError] = useState("");
 
   // Base URL for your API
-  const API_BASE_URL = "https://kottakkal-e-store.onrender.com/api";
+  const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
   const fetchOrders = async () => {
     try {

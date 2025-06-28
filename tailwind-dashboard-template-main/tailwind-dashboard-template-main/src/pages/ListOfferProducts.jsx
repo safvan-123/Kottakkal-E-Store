@@ -17,7 +17,7 @@ const OfferProducts = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        "https://kottakkal-e-store.onrender.com/api/offer-products/getoffer-products"
+        `${import.meta.env.VITE_API_URL}/api/offer-products/getoffer-products`
       );
       if (data.success) {
         setOfferProducts(data.offerProducts);
@@ -60,7 +60,9 @@ const OfferProducts = () => {
     }
     try {
       const { data } = await axios.put(
-        `https://kottakkal-e-store.onrender.com/api/offer-products/${selectedOffer._id}`,
+        `${import.meta.env.VITE_API_URL}/api/offer-products/${
+          selectedOffer._id
+        }`,
         { offerPercentage: Number(newOfferPercentage) }
       );
       if (data.success) {
@@ -79,7 +81,7 @@ const OfferProducts = () => {
     if (!window.confirm("Are you sure you want to delete this offer?")) return;
     try {
       const { data } = await axios.delete(
-        `https://kottakkal-e-store.onrender.com/api/offer-products/${id}`
+        `${import.meta.env.VITE_API_URL}/api/offer-products/${id}`
       );
       if (data.success) {
         fetchOffers();

@@ -31,7 +31,9 @@ const CreateProduct = () => {
       }
       try {
         const { data } = await axios.get(
-          `https://kottakkal-e-store.onrender.com/api/v1/category/single-category/${cid}`
+          `${
+            import.meta.env.VITE_API_URL
+          }/api/v1/category/single-category/${cid}`
         );
         if (data.success) {
           setCategory(data.category);
@@ -96,7 +98,7 @@ const CreateProduct = () => {
       console.log("Submitting payload:", payload);
 
       const { data } = await axios.post(
-        "https://kottakkal-e-store.onrender.com/api/v1/product/create-product",
+        `${import.meta.env.VITE_API_URL}/api/v1/product/create-product`,
         payload
       );
 
