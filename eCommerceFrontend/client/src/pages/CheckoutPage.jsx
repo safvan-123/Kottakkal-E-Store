@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
+import { FaMapMarkerAlt } from "react-icons/fa";
 
 const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
 
@@ -17,12 +18,6 @@ const CheckoutPage = () => {
   // const [selectedaddress, setselectedAddress] = useState({});
   const [selected, setSelected] = useState(false);
   const [savedData, setsavedData] = useState({});
-  const handleClick = () => {
-    setSelected((prev) => !prev); // Toggle checked state
-    // setselectedAddress(savedData);
-  };
-
-  console.log(savedData);
   const [address, setAddress] = useState({
     name: "",
     phone: "",
@@ -32,7 +27,18 @@ const CheckoutPage = () => {
     city: "",
     pincode: "",
   });
-  console.log(savedData);
+  const handleClick = () => {
+    setSelected((prev) => {
+      const newValue = !prev;
+      if (newValue == true) {
+        setAddress(savedData);
+      }
+      return newValue;
+    });
+  };
+
+  // console.log(savedData);
+  console.log(address);
 
   const [locationDetails, setLocationDetails] = useState(null);
   const [pincodeError, setPincodeError] = useState("");
@@ -56,9 +62,9 @@ const CheckoutPage = () => {
       };
     }
   }, [currentStep]);
-  useEffect(() => {
-    setsavedData({});
-  }, []);
+  // useEffect(() => {
+  //   setsavedData({});
+  // }, []);
 
   const formatPrice = (amount) =>
     new Intl.NumberFormat("en-IN", {
@@ -156,12 +162,13 @@ const CheckoutPage = () => {
     fetchAddress();
   }, [token]);
   const validateAddressStep = () => {
-    if (
-      !address.name ||
-      !address.phone ||
-      !address.addressLine ||
-      !address.pincode
-    ) {
+    const name = address.name || savedData.fullName;
+    const phone = address.phone || savedData.phone;
+    const fullAddress = address.addressLine || savedData.fullAddress;
+    const pincode = address.pincode || savedData.pincode;
+    // const city = address.city || savedData.city;
+
+    if (!name || !phone || !fullAddress || !pincode) {
       toast.error(
         "Please fill in all primary required address details (Name, Phone, Full Address, Pincode)."
       );
@@ -223,13 +230,14 @@ const CheckoutPage = () => {
         totalAmount: cartTotal,
         offerPrice: cartTotal,
         shippingAddress: {
-          name: address.name,
+          name: address.name || address?.fullName,
           phone: address.phone,
-          address: `${address.addressLine}${
-            address.landmark ? ", " + address.landmark : ""
-          }`,
+          address:
+            `${address.addressLine}${
+              address.landmark ? ", " + address.landmark : ""
+            }` || address?.fullAddress,
           city: locationDetails?.district || address.city,
-          state: locationDetails?.state || "",
+          state: locationDetails?.state || address?.state,
           pincode: address.pincode,
         },
         paymentMethod: paymentStatus,
@@ -332,12 +340,12 @@ const CheckoutPage = () => {
             });
           },
           prefill: {
-            name: address.name,
+            name: address.name || address?.fullName,
             email: "customer@example.com",
             contact: address.phone,
           },
           notes: {
-            addressLine: address.addressLine,
+            addressLine: address.addressLine || address?.fullAddress,
             landmark: address.landmark,
             city: locationDetails?.district || address.city,
             pincode: address.pincode,
@@ -371,23 +379,23 @@ const CheckoutPage = () => {
     }
   };
 
-  const isNextStep1Disabled =
-    currentStep === 1 &&
-    (pincodeError ||
-      !address.name ||
-      !address.phone ||
-      !address.addressLine ||
-      !address.pincode ||
-      (!locationDetails && !address.city));
-  const isPlaceOrderDisabled =
-    cartItems.length === 0 ||
-    !address.name ||
-    !address.phone ||
-    !address.addressLine ||
-    !address.pincode ||
-    (!locationDetails && !address.city) ||
-    (pincodeError && !address.city) ||
-    loadingOrder;
+  // const isNextStep1Disabled =
+  //   currentStep === 1 &&
+  //   (pincodeError ||
+  //     !address.name ||
+  //     !address.phone ||
+  //     !address.addressLine ||
+  //     !address.pincode ||
+  //     (!locationDetails && !address.city));
+  // const isPlaceOrderDisabled =
+  //   cartItems.length === 0 ||
+  //   !address.name ||
+  //   !address.phone ||
+  //   !address.addressLine ||
+  //   !address.pincode ||
+  //   (!locationDetails && !address.city) ||
+  //   (pincodeError && !address.city) ||
+  //   loadingOrder;
 
   return (
     <div className="bg-gradient-to-br from-indigo-50 to-blue-100 min-h-screen py-10 px-4 sm:px-6 lg:px-8 font-sans">
@@ -466,24 +474,26 @@ const CheckoutPage = () => {
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: "center" }}>
-              <h1 style={{ marginBottom: "10px" }}>
-                Not Delivery Address added..{" "}
-              </h1>{" "}
-              <div>
-                <button
-                  className="btn btn-success "
-                  onClick={() => navigate("/address")}
-                  style={{
-                    backgroundColor: "darkblue",
-                    color: "white",
-                    marginBottom: "20px",
-                    padding: "10px 30px",
-                  }}
-                >
-                  Add Home Delivery Address
-                </button>
+            <div
+              className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow border border-gray-200"
+              style={{ marginBottom: "30px" }}
+            >
+              <div className="text-blue-600 text-2xl mb-2">
+                <FaMapMarkerAlt />
               </div>
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                No Delivery Address Found
+              </h2>
+              <p className="text-sm text-gray-600 text-center mb-4 px-2">
+                You haven’t added a delivery address yet. Please add one to
+                continue.
+              </p>
+              <button
+                onClick={() => navigate("/address")}
+                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-1.5 rounded-md transition duration-300"
+              >
+                Add Address
+              </button>
             </div>
           )}
 
@@ -665,7 +675,7 @@ const CheckoutPage = () => {
                       <strong className="text-gray-800 ml-2">District:</strong>{" "}
                       {locationDetails.district},
                       <strong className="text-gray-800 ml-2">State:</strong>{" "}
-                      {locationDetails.state}
+                      {locationDetails.state || address?.state}
                     </p>
                   </div>
                 )}
@@ -869,17 +879,17 @@ const CheckoutPage = () => {
                   </h3>
                   <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
                     <strong className="font-medium">Name:</strong>{" "}
-                    {address.name}
+                    {savedData.fullName}
                     <br />
                     <strong className="font-medium">Phone:</strong>{" "}
-                    {address.phone}
+                    {savedData.phone}
                     <br />
                     <strong className="font-medium">Address:</strong>{" "}
-                    {address.addressLine},{" "}
-                    {address.landmark ? `${address.landmark}, ` : ""}
+                    {savedData.addressLine},{" "}
+                    {savedData.landmark ? `${savedData.landmark}, ` : ""}
                     {locationDetails?.area || ""},{" "}
                     {locationDetails?.district || address.city},{" "}
-                    {locationDetails?.state || ""} - {address.pincode}
+                    {/* {locationDetails?.state || ""} - {savedData.pincode} */}
                   </p>
                   <p className="text-gray-700 text-sm sm:text-base mt-2 sm:mt-3">
                     <strong className="font-medium">Payment Method:</strong>{" "}
@@ -982,7 +992,7 @@ const CheckoutPage = () => {
                 <button
                   onClick={handleNextStep}
                   className="flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-lg font-medium shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
-                  disabled={isNextStep1Disabled}
+                  // disabled={isNextStep1Disabled}
                 >
                   Next Step
                   <svg
@@ -1005,7 +1015,7 @@ const CheckoutPage = () => {
                 <button
                   onClick={handlePlaceOrder}
                   className="flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-teal-600 text-white text-lg font-bold shadow-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ml-auto"
-                  disabled={isPlaceOrderDisabled}
+                  // disabled={isPlaceOrderDisabled}
                 >
                   {loadingOrder ? (
                     <svg
