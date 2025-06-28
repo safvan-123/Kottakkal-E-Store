@@ -14,7 +14,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const { token } = useContext(AuthContext);
   // console.log(cartItems);
-
+  const [savedData, setsavedData] = useState({});
   const [address, setAddress] = useState({
     name: "",
     phone: "",
@@ -121,7 +121,7 @@ const CheckoutPage = () => {
       setPincodeError("");
       setAddress((prevAddress) => ({ ...prevAddress, city: "" }));
     }
-  }, [address.pincode]);
+  }, [address?.pincode]);
   useEffect(() => {
     const fetchAddress = async () => {
       try {
@@ -134,7 +134,7 @@ const CheckoutPage = () => {
           }
         );
         if (data.success) {
-          setAddress(data.address);
+          setsavedData(data.address);
         }
       } catch (error) {
         console.error("Error fetching address:", error);
@@ -382,65 +382,74 @@ const CheckoutPage = () => {
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden lg:grid lg:grid-cols-3 transform transition-all duration-300 ease-in-out">
         {/* Left Section: Steps & Content */}
         <div className="lg:col-span-2 p-8 md:p-12 border-r border-gray-100">
-          <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">
-                {address
-                  ? `Delivering to ${address.fullName}`
-                  : "Fetching address..."}
-              </h2>
-              <button
-                className="text-blue-600 hover:underline text-base"
-                onClick={() => navigate("/address")}
-              >
-                Edit
-              </button>
-            </div>
+          {savedData ? (
+            <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-2xl p-6 border border-gray-200">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-gray-800">
+                  {savedData
+                    ? `Delivering to ${savedData?.fullName}`
+                    : "Fetching savedData..."}
+                </h2>
+                <button
+                  className="text-blue-600 hover:underline text-base"
+                  onClick={() => navigate("/address")}
+                >
+                  Edit
+                </button>
+              </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-              <p>
-                <span className="font-medium">Full Name:</span>{" "}
-                {address.fullName}
-              </p>
-              <p>
-                <span className="font-medium">Phone:</span> {address.phone}
-              </p>
-              <p>
-                <span className="font-medium">Alt Phone:</span>{" "}
-                {address.altPhone}
-              </p>
-              <p>
-                <span className="font-medium">Landmark:</span>{" "}
-                {address.landmark}
-              </p>
-              <p className="md:col-span-2">
-                <span className="font-medium">Full Address:</span>{" "}
-                {address.fullAddress}
-              </p>
-              <p>
-                <span className="font-medium">City:</span>
-                {address.city}
-              </p>
-              <p>
-                <span className="font-medium">Pincode:</span> {address.pincode}
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+                <p>
+                  <span className="font-medium">Full Name:</span>{" "}
+                  {savedData?.fullName}
+                </p>
+                <p>
+                  <span className="font-medium">Phone:</span> {savedData?.phone}
+                </p>
+                <p>
+                  <span className="font-medium">Alt Phone:</span>{" "}
+                  {savedData?.altPhone}
+                </p>
+                <p>
+                  <span className="font-medium">Landmark:</span>{" "}
+                  {savedData?.landmark}
+                </p>
+                <p className="md:col-span-2">
+                  <span className="font-medium">Full savedData?:</span>{" "}
+                  {savedData?.fullAddress}
+                </p>
+                <p>
+                  <span className="font-medium">City:</span>
+                  {savedData?.city}
+                </p>
+                <p>
+                  <span className="font-medium">Pincode:</span>{" "}
+                  {savedData?.pincode}
+                </p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div style={{ textAlign: "center" }}>
+              <h1 style={{ marginBottom: "10px" }}>
+                Not Delivery Address added..{" "}
+              </h1>{" "}
+              <div>
+                <button
+                  className="btn btn-success "
+                  onClick={() => navigate("/address")}
+                  style={{
+                    backgroundColor: "darkblue",
+                    color: "white",
+                    marginBottom: "20px",
+                    padding: "10px 30px",
+                  }}
+                >
+                  Add Home Delivery Address
+                </button>
+              </div>
+            </div>
+          )}
 
-          <div style={{ textAlign: "center" }}>
-            <button
-              className="btn btn-success "
-              onClick={() => navigate("/address")}
-              style={{
-                backgroundColor: "darkblue",
-                color: "white",
-                marginBottom: "20px",
-                padding: "10px 30px",
-              }}
-            >
-              Add Home Delivery Address
-            </button>
-          </div>
           <h1 className="text-4xl font-extrabold text-gray-900 mb-10 text-center">
             Your Order Checkout
           </h1>
