@@ -38,12 +38,10 @@ export const placeOrder = async (req, res) => {
     if (paymentMethod === "ONLINE") {
       const isValid = verifySignature(paymentInfo);
       if (!isValid)
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Payment signature verification failed",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Payment signature verification failed",
+        });
       isPaid = true;
     }
 
