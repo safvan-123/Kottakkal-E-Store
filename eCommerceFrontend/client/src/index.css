@@ -1,4 +1,24 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+}
 
 /* These styles are for the custom arrows in react-slick */
 .custom-slick-arrow {
@@ -14,13 +34,13 @@
   justify-content: center;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
 .custom-slick-arrow:hover {
   background-color: rgba(255, 255, 255, 1);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .custom-slick-arrow.slick-prev {
@@ -32,29 +52,14 @@
 }
 
 /* Hide slick's default arrows if you are using custom ones */
-.slick-prev:before, .slick-next:before {
+.slick-prev:before,
+.slick-next:before {
   display: none;
 }
-
-
-
 
 .input {
   @apply w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* src/pages/OfferSalesPage.css */
 
@@ -97,11 +102,12 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
-    opacity: .7; /* Slightly less transparent for pulse */
+    opacity: 0.7; /* Slightly less transparent for pulse */
   }
 }
 

@@ -78,7 +78,10 @@ export default function Navbar() {
   return (
     <>
       {/* Sticky Top Header */}
-      <div className="w-full font-sans sticky top-0 z-50 bg-white shadow-sm">
+      <div
+        className="w-full font-sans sticky top-0 z-50 bg-white shadow-sm"
+        style={{ marginBottom: "0px", paddingBottom: "0px" }}
+      >
         <div className="bg-blue-50">
           <div className="container mx-auto flex items-center justify-between px-3 py-5 lg:px-4 lg:py-6">
             <div
@@ -236,7 +239,10 @@ export default function Navbar() {
         </div>
       </div>
 
-      <nav className="sticky top-[72px] z-40 bg-white shadow-sm lg:hidden border-b border-gray-200">
+      <nav
+        className="sticky top-[72px] z-40 bg-white shadow-sm lg:hidden border-b border-gray-200"
+        style={{ marginBottom: "0px", paddingBottom: "0px" }}
+      >
         <ul className="flex justify-around items-center py-2">
           <li>
             <button
@@ -265,7 +271,10 @@ export default function Navbar() {
         </ul>
       </nav>
 
-      <nav className="bg-gray-50 border-t border-gray-200 hidden lg:block">
+      <nav
+        className="bg-gray-50 border-t border-gray-200 hidden lg:block"
+        style={{ marginBottom: "0px", paddingBottom: "0px" }}
+      >
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <ul className="flex flex-wrap items-center gap-x-8 gap-y-2 text-gray-800 font-semibold">
             <li>
@@ -297,7 +306,7 @@ export default function Navbar() {
             <FaPhoneAlt className="text-base text-gray-600" />
             <span>
               24/7 Support:{" "}
-              <strong className="text-gray-900">95396-97664</strong>
+              <strong className="text-gray-900">+91 7560929242</strong>
             </span>
           </div>
         </div>

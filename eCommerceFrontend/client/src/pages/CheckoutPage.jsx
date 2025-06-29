@@ -54,17 +54,15 @@ const CheckoutPage = () => {
         console.log("Razorpay SDK loaded");
       };
       document.body.appendChild(script);
-
+      window.scrollTo({ top: 0, behavior: "smooth" });
       return () => {
         if (document.body.contains(script)) {
           document.body.removeChild(script);
         }
       };
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
-  // useEffect(() => {
-  //   setsavedData({});
-  // }, []);
 
   const formatPrice = (amount) =>
     new Intl.NumberFormat("en-IN", {
@@ -266,7 +264,7 @@ const CheckoutPage = () => {
           }`
         );
         clearCart();
-        navigate("/myorders", {
+        navigate("/ordersuccess", {
           state: { orderId: data.order._id, isPaid: data.order.isPaid },
         });
       } else {
@@ -402,7 +400,7 @@ const CheckoutPage = () => {
       <div className="max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden lg:grid lg:grid-cols-3 transform transition-all duration-300 ease-in-out">
         {/* Left Section: Steps & Content */}
         <div className="lg:col-span-2 p-8 md:p-12 border-r border-gray-100">
-          {savedData ? (
+          {currentStep == 1 && savedData ? (
             <div
               className="max-w-3xl mx-auto bg-white rounded-xl p-4 border border-white hover:border-transparent"
               style={{ marginBottom: "40px" }}
@@ -474,27 +472,31 @@ const CheckoutPage = () => {
               </div>
             </div>
           ) : (
-            <div
-              className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow border border-gray-200"
-              style={{ marginBottom: "30px" }}
-            >
-              <div className="text-blue-600 text-2xl mb-2">
-                <FaMapMarkerAlt />
-              </div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-1">
-                No Delivery Address Found
-              </h2>
-              <p className="text-sm text-gray-600 text-center mb-4 px-2">
-                You haven’t added a delivery address yet. Please add one to
-                continue.
-              </p>
-              <button
-                onClick={() => navigate("/address")}
-                className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-1.5 rounded-md transition duration-300"
-              >
-                Add Address
-              </button>
-            </div>
+            <>
+              {currentStep == 1 && (
+                <div
+                  className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow border border-gray-200"
+                  style={{ marginBottom: "30px" }}
+                >
+                  <div className="text-blue-600 text-2xl mb-2">
+                    <FaMapMarkerAlt />
+                  </div>
+                  <h2 className="text-lg font-semibold text-gray-800 mb-1">
+                    No Delivery Address Found
+                  </h2>
+                  <p className="text-sm text-gray-600 text-center mb-4 px-2">
+                    You haven’t added a delivery address yet. Please add one to
+                    continue.
+                  </p>
+                  <button
+                    onClick={() => navigate("/address")}
+                    className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-1.5 rounded-md transition duration-300"
+                  >
+                    Add Address
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           {/* </div> */}
@@ -752,7 +754,7 @@ const CheckoutPage = () => {
                       </span>
                     </div>
                   </label>
-                  <label
+                  {/* <label
                     className={`payment-option ${
                       paymentMethod === "online" ? "selected" : ""
                     } border border-gray-300 rounded-lg p-5 flex items-center cursor-pointer transition-all duration-200 ease-in-out hover:border-indigo-500 hover:shadow-md`}
@@ -801,7 +803,7 @@ const CheckoutPage = () => {
                         Pay Online (Cards, UPI, Netbanking)
                       </span>
                     </div>
-                  </label>
+                  </label> */}
                 </div>
                 {paymentMethod === "online" && (
                   <div className="p-4 bg-blue-50 border border-blue-200 text-blue-800 rounded-lg text-sm font-medium flex items-center gap-2 mt-4">
