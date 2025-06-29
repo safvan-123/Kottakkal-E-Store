@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import DownloadInvoiceButton from "../components/DownloadInvoiceButton";
 
 export default function OrderSuccessPage() {
   const { token } = useContext(AuthContext);
@@ -109,6 +110,7 @@ export default function OrderSuccessPage() {
           </a>
         </div>
       </div>
+      <DownloadInvoiceButton order={lastOrder} />
     </div>
   );
 }
