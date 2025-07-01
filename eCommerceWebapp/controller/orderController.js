@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import orderCounter from "../models/orderCounter.js";
 import { razorpay } from "../utils/razorpay.js";
 import { verifySignature } from "../utils/verifySignature.js";
 
@@ -44,8 +45,21 @@ export const placeOrder = async (req, res) => {
         });
       isPaid = true;
     }
+    // Get the next orderId
+    const getNextOrderId = async () => {
+      const counter = await orderCounter.findOneAndUpdate(
+        { name: "orderId" },
+        { $inc: { value: 1 } },
+        { new: true, upsert: true }
+      );
+
+      return 1000 + counter.value; // start from 1001
+    };
+    const orderId = await getNextOrderId();
+    console.log(orderId);
 
     const order = new Order({
+      orderId,
       user: userId,
       items,
       totalAmount,
@@ -57,7 +71,7 @@ export const placeOrder = async (req, res) => {
     });
 
     await order.save();
-
+    console.log(order);
     res.status(201).json({ success: true, order });
   } catch (err) {
     console.error("Error placing order:", err);
