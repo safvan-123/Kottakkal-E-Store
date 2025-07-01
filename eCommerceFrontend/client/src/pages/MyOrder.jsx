@@ -59,11 +59,13 @@ const MyOrdersPage = () => {
         </p>
       ) : (
         orders.map((order) => {
+          console.log(order);
+
           const currentStep = getStepIndex(order.status || "Ordered");
 
           return (
             <div
-              key={order._id}
+              key={order.orderId}
               className="bg-white shadow-md rounded-2xl mb-12 border border-gray-100 overflow-hidden"
             >
               {/* Order Header */}
@@ -71,9 +73,7 @@ const MyOrdersPage = () => {
                 <div>
                   <h2 className="text-lg font-semibold text-gray-800">
                     Order ID:{" "}
-                    <span className="text-blue-600">
-                      #{order._id.slice(-6)}
-                    </span>
+                    <span className="text-blue-600">{order.orderId}</span>
                   </h2>
                   <p className="text-sm text-gray-500 mt-1">
                     Placed on: {new Date(order.createdAt).toLocaleString()}
@@ -156,6 +156,11 @@ const MyOrdersPage = () => {
                     >
                       <div className="flex items-center gap-4">
                         <div>
+                          <img
+                            src={item?.product?.image}
+                            alt=""
+                            style={{ width: "60px", height: "60px" }}
+                          />
                           <p className="text-gray-900 font-medium">
                             {item.product.name}
                           </p>

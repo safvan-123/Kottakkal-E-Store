@@ -8,10 +8,12 @@ import React, {
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
+// import { useLocation } from "react-router-dom";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  // const location = useLocation();
   const { token, isLoggedIn } = useContext(AuthContext);
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
@@ -271,7 +273,6 @@ export const CartProvider = ({ children }) => {
       if (data.success) {
         setCartItems([]);
         setCartTotal(0);
-        toast.info("Your cart has been cleared.");
       } else {
         setCartError(data.message || "Failed to clear cart.");
       }

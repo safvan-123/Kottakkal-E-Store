@@ -51,7 +51,7 @@ export const generateInvoicePdf = async (
   const createdAt = new Date(order.createdAt).toLocaleString();
   doc.setFontSize(12);
   doc.setTextColor(0);
-  doc.text(`Order ID: ${order._id}`, 14, 35 + marginTop);
+  doc.text(`Order ID: ${order.orderId}`, 14, 35 + marginTop);
   doc.text(`Date: ${createdAt}`, 14, 42 + marginTop);
   doc.text(`Status: ${order.status}`, 14, 49 + marginTop);
   doc.text(`Payment: ${order.paymentMethod}`, 14, 56 + marginTop);
@@ -165,7 +165,7 @@ export const generateInvoicePdf = async (
   });
 
   if (options.save) {
-    doc.save(`Invoice_${order._id}.pdf`);
+    doc.save(`Invoice_${order.orderId}.pdf`);
     return null; // nothing to return when saved
   } else {
     const pdfBlob = doc.output("blob");

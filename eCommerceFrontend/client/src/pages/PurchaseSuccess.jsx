@@ -15,8 +15,6 @@ export default function OrderSuccessPage() {
   const [orders, setOrders] = useState([]);
   const [lastOrder, setLastOrder] = useState(null);
 
-  console.log(lastOrder);
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -28,7 +26,8 @@ export default function OrderSuccessPage() {
       try {
         if (!order || !order.items?.length) return;
         const lastEmailedOrderId = localStorage.getItem("lastEmailedOrderId");
-        if (lastEmailedOrderId === order._id) {
+
+        if (lastEmailedOrderId == order?.orderId) {
           console.log("Email already sent for this order.");
           return;
         }
@@ -46,7 +45,7 @@ export default function OrderSuccessPage() {
           {
             to: userEmail,
             order: {
-              _id: order._id,
+              _id: order.orderId,
               items: order.items,
               total: order.totalAmount,
               deliveryAddress: order?.shippingAddress,
@@ -61,7 +60,10 @@ export default function OrderSuccessPage() {
         );
 
         console.log("✅ Email sent:", res.data);
-        localStorage.setItem("lastEmailedOrderId", order._id);
+        if (location.pathname !== "/ordersuccess") {
+          toast.info("Your cart has been cleared.");
+        }
+        localStorage.setItem("lastEmailedOrderId", order.orderId);
         return res.data;
       } catch (err) {
         console.error("❌ Email error:", err);
@@ -117,9 +119,9 @@ export default function OrderSuccessPage() {
         {/* Order Summary */}
         <div className="mt-6 space-y-2 text-sm">
           <h2 className="text-lg font-semibold border-b pb-2">Order Summary</h2>
-          {/* <p>
-            <span className="font-medium">Order ID:</span> #123456
-          </p> */}
+          <p>
+            <span className="font-medium">Order ID:</span> {lastOrder?.orderId}
+          </p>
           {/* <p>
             <span className="font-medium">Items:</span>{" "}
             {lastOrder?.items?.map((item) => item.product.name)}
