@@ -13,7 +13,6 @@ export default function OrderSuccessPage() {
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  const [emailSent, setEmailSent] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
 
   console.log(lastOrder);
@@ -23,12 +22,16 @@ export default function OrderSuccessPage() {
   }, []);
 
   useEffect(() => {
-    if (!token || emailSent) return;
+    if (!token) return;
 
     const sendOrderEmail = async (order, userEmail) => {
       try {
         if (!order || !order.items?.length) return;
-
+        const lastEmailedOrderId = localStorage.getItem("lastEmailedOrderId");
+        if (lastEmailedOrderId === order._id) {
+          console.log("Email already sent for this order.");
+          return;
+        }
         const pdfBase64 = await generateInvoicePdf(order, logo, {
           save: false,
         });
@@ -58,7 +61,7 @@ export default function OrderSuccessPage() {
         );
 
         console.log("✅ Email sent:", res.data);
-        setEmailSent(true);
+        localStorage.setItem("lastEmailedOrderId", order._id);
         return res.data;
       } catch (err) {
         console.error("❌ Email error:", err);

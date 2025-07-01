@@ -4,6 +4,8 @@ import logo from "../assets/DeliveryImage.avif"; // replace with your logo path
 import { generateInvoicePdf } from "./GenerateInvoicePdf";
 
 export default function DownloadInvoiceButton({ order }) {
+  console.log(order);
+
   if (!order || !order.items?.length) return;
   const handleDownload = async () => {
     const savePdf = await generateInvoicePdf(order, logo, { save: true });
