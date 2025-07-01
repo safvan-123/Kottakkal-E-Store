@@ -4,12 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import DownloadInvoiceButton from "../components/DownloadInvoiceButton";
+import axios from "axios";
+import "jspdf-autotable";
+import logo from "../assets/DeliveryImage.avif";
+import { generateInvoicePdf } from "../components/GenerateInvoicePdf";
 
 export default function OrderSuccessPage() {
-  const { token } = useContext(AuthContext);
+  const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [emailSent, setEmailSent] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
+
   console.log(lastOrder);
 
   useEffect(() => {
@@ -17,9 +23,49 @@ export default function OrderSuccessPage() {
   }, []);
 
   useEffect(() => {
-    if (!token) return;
+    if (!token || emailSent) return;
 
-    const fetchOrders = async () => {
+    const sendOrderEmail = async (order, userEmail) => {
+      try {
+        if (!order || !order.items?.length) return;
+
+        const pdfBase64 = await generateInvoicePdf(order, logo, {
+          save: false,
+        });
+
+        if (!pdfBase64) {
+          console.error("Failed to generate PDF.");
+          return;
+        }
+
+        const res = await axios.post(
+          `http://localhost:5050/api/email`,
+          {
+            to: userEmail,
+            order: {
+              _id: order._id,
+              items: order.items,
+              total: order.totalAmount,
+              deliveryAddress: order?.shippingAddress,
+            },
+            invoice: pdfBase64, // ✅ this is the actual string now
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("✅ Email sent:", res.data);
+        setEmailSent(true);
+        return res.data;
+      } catch (err) {
+        console.error("❌ Email error:", err);
+      }
+    };
+
+    const fetchAndSendEmail = async () => {
       try {
         const res = await fetch(
           `${import.meta.env.VITE_API_URL}/api/orders/my-orders`,
@@ -33,7 +79,9 @@ export default function OrderSuccessPage() {
         if (data.success) {
           setOrders(data.orders);
           if (data.orders.length > 0) {
-            setLastOrder(data.orders[0]); // ✅ this is the most recent one
+            const latestOrder = data.orders[0];
+            setLastOrder(latestOrder);
+            await sendOrderEmail(latestOrder, user.email); // ✅ now this is inside async function
           }
         } else {
           toast.error("Failed to get orders.");
@@ -43,7 +91,7 @@ export default function OrderSuccessPage() {
       }
     };
 
-    fetchOrders();
+    fetchAndSendEmail(); // call inner async function
   }, [token]);
 
   return (
@@ -80,8 +128,9 @@ export default function OrderSuccessPage() {
               .filter(Boolean) // ensures no undefined names
               .join(", ")}
           </p>
-          <p>
-            <span className="font-medium">Total:</span> {lastOrder?.totalAmount}
+          <p className="font-bold">
+            <span className="font-medium">Total Price:</span> ₹
+            {lastOrder?.totalAmount}
           </p>
           <p>
             <span className="font-medium">Delivery Address:</span>{" "}

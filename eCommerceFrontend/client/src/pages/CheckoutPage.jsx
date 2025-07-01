@@ -27,6 +27,7 @@ const CheckoutPage = () => {
     city: "",
     pincode: "",
   });
+
   const handleClick = () => {
     setSelected((prev) => {
       const newValue = !prev;
@@ -38,7 +39,6 @@ const CheckoutPage = () => {
   };
 
   // console.log(savedData);
-  console.log(address);
 
   const [locationDetails, setLocationDetails] = useState(null);
   const [pincodeError, setPincodeError] = useState("");
@@ -230,10 +230,9 @@ const CheckoutPage = () => {
         shippingAddress: {
           name: address.name || address?.fullName,
           phone: address.phone,
-          address:
-            `${address.addressLine}${
-              address.landmark ? ", " + address.landmark : ""
-            }` || address?.fullAddress,
+          address: `${address?.fullAddress}${
+            address.landmark ? ", " + address.landmark : ""
+          }`,
           city: locationDetails?.district || address.city,
           state: locationDetails?.state || address?.state,
           pincode: address.pincode,

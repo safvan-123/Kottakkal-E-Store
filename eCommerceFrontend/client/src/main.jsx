@@ -15,21 +15,21 @@ const clientId =
   "226251661150-764glgmht3fd65okj8acfacs41rcilgp.apps.googleusercontent.com";
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <ThemeProvider>
-      <GoogleOAuthProvider clientId={clientId}>
-        <AuthProvider>
-          <CartProvider>
-            <ProductProvider>
-              <CategoryProvider>
-                <WishlistProvider>
-                  <App />
-                </WishlistProvider>
-              </CategoryProvider>
-            </ProductProvider>
-          </CartProvider>
-        </AuthProvider>
-      </GoogleOAuthProvider>
-    </ThemeProvider>
-  </StrictMode>
+  // <StrictMode>
+  <ThemeProvider>
+    <GoogleOAuthProvider clientId={clientId}>
+      <AuthProvider>
+        <CartProvider>
+          <ProductProvider>
+            <CategoryProvider>
+              <WishlistProvider>
+                <App />
+              </WishlistProvider>
+            </CategoryProvider>
+          </ProductProvider>
+        </CartProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
+  </ThemeProvider>
+  // </StrictMode>
 );
