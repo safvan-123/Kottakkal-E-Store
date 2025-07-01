@@ -56,7 +56,6 @@ export const placeOrder = async (req, res) => {
       return 1000 + counter.value; // start from 1001
     };
     const orderId = await getNextOrderId();
-    console.log(orderId);
 
     const order = new Order({
       orderId,
@@ -71,7 +70,7 @@ export const placeOrder = async (req, res) => {
     });
 
     await order.save();
-    console.log(order);
+
     res.status(201).json({ success: true, order });
   } catch (err) {
     console.error("Error placing order:", err);
