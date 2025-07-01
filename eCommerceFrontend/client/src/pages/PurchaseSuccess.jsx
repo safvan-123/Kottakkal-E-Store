@@ -39,7 +39,7 @@ export default function OrderSuccessPage() {
         }
 
         const res = await axios.post(
-          `http://localhost:5050/api/email`,
+          `${import.meta.env.VITE_API_URL}/api/email`,
           {
             to: userEmail,
             order: {
