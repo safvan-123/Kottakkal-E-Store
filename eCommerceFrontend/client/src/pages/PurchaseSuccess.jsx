@@ -13,7 +13,7 @@ export default function OrderSuccessPage() {
   const { user, token } = useContext(AuthContext);
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
-  // const [emailSent, setEmailSent] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
   const [lastOrder, setLastOrder] = useState(null);
 
   console.log(lastOrder);
@@ -23,7 +23,7 @@ export default function OrderSuccessPage() {
   }, []);
 
   useEffect(() => {
-    // if (!token || emailSent) return;
+    if (!token || emailSent) return;
 
     const sendOrderEmail = async (order, userEmail) => {
       try {
@@ -58,7 +58,7 @@ export default function OrderSuccessPage() {
         );
 
         console.log("✅ Email sent:", res.data);
-        // setEmailSent(true);
+        setEmailSent(true);
         return res.data;
       } catch (err) {
         console.error("❌ Email error:", err);
