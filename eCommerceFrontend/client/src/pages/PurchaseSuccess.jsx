@@ -58,7 +58,7 @@ export default function OrderSuccessPage() {
         );
 
         console.log("✅ Email sent:", res.data);
-        setEmailSent(true);
+        // setEmailSent(true);
         return res.data;
       } catch (err) {
         console.error("❌ Email error:", err);
