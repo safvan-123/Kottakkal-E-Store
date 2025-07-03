@@ -4,9 +4,12 @@ import { format } from "date-fns";
 
 const AllOrders = () => {
   const [orders, setOrders] = useState([]);
+  const [paidStatus, setPaidStatus] = useState({});
+
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [statusUpdating, setStatusUpdating] = useState(false);
   const [error, setError] = useState("");
+  console.log(selectedOrder);
 
   // Base URL for your API
   const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
@@ -21,6 +24,11 @@ const AllOrders = () => {
       });
       if (data.success) {
         setOrders(data.orders);
+        const newPaidStatus = data.orders.reduce((acc, o) => {
+          acc[o._id] = o.isPaid;
+          return acc;
+        }, {});
+        setPaidStatus(newPaidStatus);
       } else {
         setError("Failed to fetch orders.");
       }
@@ -36,39 +44,33 @@ const AllOrders = () => {
     fetchOrders();
   }, []);
 
-  const handleStatusChange = async (orderId, newStatus) => {
+  const handleStatusChange = async (orderId, status, isPaid) => {
     setStatusUpdating(true);
     try {
       const token = localStorage.getItem("token");
+      console.log("Sent status:", status, "Sent isPaid:", isPaid);
+
       await axios.put(
         `${API_BASE_URL}/orders/${orderId}`,
-        { status: newStatus },
+        { status, isPaid },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      // Update selectedOrder's status directly to avoid flickering, then re-fetch for full consistency
-      setSelectedOrder((prevOrder) => ({ ...prevOrder, status: newStatus }));
+
+      alert(`Order ${orderId.slice(-6)} updated successfully`);
       fetchOrders();
-      alert(`Order ${orderId.slice(-6)} status updated to ${newStatus}`);
     } catch (err) {
-      console.error("Error updating order status:", err);
-      alert("Failed to update order status. Please try again.");
+      console.error("❌ Error:", err.response?.data || err.message);
+      alert("Failed to update order. Please try again.");
     } finally {
       setStatusUpdating(false);
     }
   };
 
-  const statusOptions = [
-    "Pending",
-    "Processing",
-    "Shipped",
-    "Out for Delivery",
-    "Delivered",
-    "Cancelled",
-  ];
+  const statusOptions = ["Order Confirmed", "Delivered"];
 
   const formatPrice = (amount) =>
     new Intl.NumberFormat("en-IN", {
@@ -95,7 +97,7 @@ const AllOrders = () => {
           <table className="min-w-full text-sm bg-white dark:bg-gray-800 rounded-md">
             <thead>
               <tr className="bg-gray-200 dark:bg-gray-700 text-left text-gray-600 dark:text-gray-300">
-                <th className="px-4 py-2">#</th>
+                <th className="px-4 py-2">Order Id</th>
                 <th className="px-4 py-2">User</th>
                 <th className="px-4 py-2">Amount</th>
                 <th className="px-4 py-2">Status</th>
@@ -127,7 +129,7 @@ const AllOrders = () => {
                     `}
                     onClick={() => setSelectedOrder(order)}
                   >
-                    <td className="px-4 py-2">{idx + 1}</td>
+                    <td className="px-4 py-2">{order?.orderId}</td>
                     <td className="px-4 py-2">{order.user?.name || "N/A"}</td>
                     <td className="px-4 py-2">
                       {formatPrice(order.offerPrice || order.totalAmount)}
@@ -147,13 +149,41 @@ const AllOrders = () => {
                     </td>
                     <td className="px-4 py-2">{order.paymentMethod}</td>
                     <td className="px-4 py-2">
-                      <span
+                      {/* <span
                         className={`font-semibold ${
                           order.isPaid ? "text-green-600" : "text-red-600"
                         }`}
                       >
                         {order.isPaid ? "Yes" : "No"}
-                      </span>
+                      </span> */}
+                      <div className="flex items-center gap-2 mt-2 sm:mt-7">
+                        <input
+                          type="checkbox"
+                          checked={paidStatus[order._id] ?? order.isPaid}
+                          onChange={(e) => {
+                            const isChecked = e.target.checked;
+
+                            setPaidStatus((prev) => ({
+                              ...prev,
+                              [order._id]: isChecked,
+                            }));
+
+                            // Send with current order status
+                            handleStatusChange(
+                              order._id,
+                              order.status,
+                              isChecked
+                            );
+                          }}
+                        />
+
+                        <label
+                          htmlFor="isPaid"
+                          className="text-sm text-gray-700"
+                        >
+                          Payment Completed
+                        </label>
+                      </div>
                     </td>
                     <td className="px-4 py-2">
                       {order.createdAt
@@ -294,13 +324,16 @@ const AllOrders = () => {
                   Update Order Status
                 </label>
                 <select
-                  id="orderStatus"
                   value={selectedOrder.status}
                   onChange={(e) =>
-                    handleStatusChange(selectedOrder._id, e.target.value)
+                    handleStatusChange(
+                      selectedOrder._id,
+                      e.target.value,
+                      paidStatus[selectedOrder._id] ?? selectedOrder.isPaid
+                    )
                   }
                   disabled={statusUpdating}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-600 text-gray-900 dark:text-white focus:ring-indigo-500 focus:border-indigo-500"
+                  className="..."
                 >
                   {statusOptions.map((s) => (
                     <option key={s} value={s}>
@@ -308,6 +341,7 @@ const AllOrders = () => {
                     </option>
                   ))}
                 </select>
+
                 {statusUpdating && (
                   <p className="text-sm text-indigo-600 dark:text-indigo-400 mt-2">
                     Updating status...
