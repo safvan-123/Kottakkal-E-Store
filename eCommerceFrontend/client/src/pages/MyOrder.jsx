@@ -7,8 +7,10 @@ import {
   FaTruckMoving,
   FaCheckCircle,
   FaClipboardCheck,
+  FaEye,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 // const STATUS_STEPS = [
 //   { label: "Ordered", icon: <FaBoxOpen /> },
@@ -22,6 +24,7 @@ const STATUS_STEPS = [
   { label: "Delivered", icon: <FaCheckCircle /> },
 ];
 const MyOrdersPage = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const { token } = useContext(AuthContext);
 
@@ -56,6 +59,11 @@ const MyOrdersPage = () => {
   const getStepIndex = (status) =>
     STATUS_STEPS.filter((step) => step.label === status);
 
+  const handleViewOrder = (orderId) => {
+    console.log(orderId);
+
+    navigate(`/myorders/${orderId}`);
+  };
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-10">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">My Orders</h1>
@@ -74,9 +82,10 @@ const MyOrdersPage = () => {
               key={order._id}
               className="bg-white rounded-xl shadow-md border border-gray-200 mb-8"
             >
-              {/* Header */}
-              <div className="flex flex-col sm:flex-row justify-between p-5 border-b border-gray-100 gap-4">
-                <div>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 border-b border-gray-100 gap-4">
+                {/* Left: Order Info */}
+
+                <div className="flex-1">
                   <p className="text-sm text-gray-600">
                     <span className="font-medium">Order ID:</span>{" "}
                     <span className="text-blue-600">{order.orderId}</span>
@@ -93,6 +102,18 @@ const MyOrdersPage = () => {
                     })}
                   </p>
                 </div>
+                {/* Right: View Order Button */}
+                <div className="flex items-center justify-end sm:mr-4">
+                  <button
+                    onClick={() => handleViewOrder(order._id)}
+                    className="group flex items-center gap-2 bg-white border border-blue-600 text-blue-600 px-4 py-2 rounded-full shadow-sm hover:bg-blue-600 hover:text-white transition-all duration-200 text-sm"
+                  >
+                    <FaEye className="text-sm group-hover:scale-110 transition-transform duration-200" />
+                    <span className="font-medium">View Order</span>
+                  </button>
+                </div>
+
+                {/* Center: Payment Status + Amount */}
                 <div className="text-sm sm:text-right">
                   <span
                     className={`inline-block px-3 py-1 text-xs rounded-full ${

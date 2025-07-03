@@ -19,6 +19,7 @@ import ContactPage from "./pages/ContactPage";
 import OfferSalesPage from "./components/OfferSalesPage";
 import AddressForm from "./pages/AddressForm";
 import OrderSuccessPage from "./pages/PurchaseSuccess";
+import OrderDetailPage from "./components/OrderDetailPage";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
         <Route path="/address" element={<AddressForm />} />
         <Route path="/offersalepage" element={<OfferSalesPage />} />
         <Route path="/ordersuccess" element={<OrderSuccessPage />} />
+        <Route path="/myorders/:id" element={<OrderDetailPage />} />
       </Routes>
 
       <Footer />
