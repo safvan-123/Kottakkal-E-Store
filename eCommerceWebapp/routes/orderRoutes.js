@@ -13,6 +13,6 @@ router.post("/razorpay-order", createRazorpayOrder);
 router.post("/place", requireSignIn, placeOrder);
 
 router.get("/my-orders", requireSignIn, getUserOrders);
-router.get("/myorders/:id", requireSignIn, getSingleOrder);
+router.get("/my-orders/:id", requireSignIn, getSingleOrder);
 
 export default router;
