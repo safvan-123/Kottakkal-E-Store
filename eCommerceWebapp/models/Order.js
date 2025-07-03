@@ -30,15 +30,8 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: [
-      "Pending",
-      "Processing",
-      "Shipped",
-      "Out for Delivery",
-      "Delivered",
-      "Cancelled",
-    ],
-    default: "Pending",
+    enum: ["Order Confirmed", "Delivered", "Cancelled"],
+    default: "Order Confirmed",
   },
   createdAt: { type: Date, default: Date.now },
 });
