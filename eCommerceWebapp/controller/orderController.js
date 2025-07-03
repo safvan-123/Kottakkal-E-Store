@@ -96,6 +96,7 @@ export const getUserOrders = async (req, res) => {
 export const getSingleOrder = async (req, res) => {
   try {
     const { id } = req.params; // order._id from MongoDB
+    const userId = req.user._id; // from auth middleware
 
     const order = await Order.findById(id)
       .populate("user", "name email")
@@ -105,6 +106,13 @@ export const getSingleOrder = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
+    }
+
+    // Ensure order belongs to current user
+    if (order.user._id.toString() !== userId.toString()) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied to this order" });
     }
 
     res.status(200).json({ success: true, order });
