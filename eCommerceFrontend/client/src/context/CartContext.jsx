@@ -61,7 +61,6 @@ export const CartProvider = ({ children }) => {
   const addToCart = async (product, quantity = 1, size, color) => {
     if (!isLoggedIn) {
       toast.error("Please log in to add items to the cart.");
-
       return;
     }
     if (!token) {
@@ -70,35 +69,28 @@ export const CartProvider = ({ children }) => {
     }
 
     const itemSize =
-      size ||
-      (product.sizes && product.sizes.length > 0
-        ? product.sizes[0]
-        : "One Size");
+      size || (product.sizes?.length ? product.sizes[0] : "One Size");
     const itemColor =
-      color ||
-      (product.colors && product.colors.length > 0
-        ? product.colors[0]
-        : "Default Color");
+      color || (product.colors?.length ? product.colors[0] : "Default Color");
 
-    if (product.sizes && product.sizes.length > 0 && !itemSize) {
+    if (product.sizes?.length && !itemSize) {
       toast.error(`Please select a size for ${product.name}`);
       return;
     }
-    if (product.colors && product.colors.length > 0 && !itemColor) {
+    if (product.colors?.length && !itemColor) {
       toast.error(`Please select a color for ${product.name}`);
       return;
     }
-    if (
-      product.colors &&
-      product.colors.length > 0 &&
-      itemColor === "Default Color" &&
-      !color
-    ) {
+    if (product.colors?.length && itemColor === "Default Color" && !color) {
       toast.error(`Please select a color for ${product.name}`);
       return;
     }
 
-    // setLoadingCart
+    // ✅ Check if the item with same productId, size, and color already exists
+    const itemAlreadyInCart = cartItems?.some(
+      (item) => item.product?._id === product._id
+    );
+
     setCartError(null);
     try {
       const config = {
@@ -118,7 +110,15 @@ export const CartProvider = ({ children }) => {
       if (data.success) {
         setCartItems(data.items);
         setCartTotal(data.total);
-        toast.success(`${product.name} added to cart!`);
+
+        // ✅ Only show success toast if the item was NOT already in cart
+        if (!itemAlreadyInCart) {
+          toast.success(`${product.name} added to cart!`);
+        } else if (itemAlreadyInCart) {
+          toast.info(
+            `🛍️ ${product.name} is already in your cart! If you need more, change the quantity from the cart page.`
+          );
+        }
       } else {
         setCartError(data.message || "Failed to add item to cart.");
       }

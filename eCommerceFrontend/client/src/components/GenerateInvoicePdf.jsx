@@ -48,7 +48,15 @@ export const generateInvoicePdf = async (
 
   // --- Order Info ---
   const marginTop = 10;
-  const createdAt = new Date(order.createdAt).toLocaleString();
+  const createdAt = new Date(order.createdAt).toLocaleString("en-US", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+
   doc.setFontSize(12);
   doc.setTextColor(0);
   doc.text(`Order ID: ${order.orderId}`, 14, 35 + marginTop);

@@ -44,6 +44,7 @@ const MyOrdersPage = () => {
     };
 
     fetchOrders();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [token]);
 
   const getStepIndex = (status) =>
@@ -76,7 +77,15 @@ const MyOrdersPage = () => {
                     <span className="text-blue-600">{order.orderId}</span>
                   </h2>
                   <p className="text-sm text-gray-500 mt-1">
-                    Placed on: {new Date(order.createdAt).toLocaleString()}
+                    Placed on:Placed on:{" "}
+                    {new Date(order.createdAt).toLocaleString("en-US", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hour12: true,
+                    })}
                   </p>
                 </div>
                 <div className="text-right">
