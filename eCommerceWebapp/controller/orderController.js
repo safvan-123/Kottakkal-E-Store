@@ -93,3 +93,23 @@ export const getUserOrders = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+export const getSingleOrder = async (req, res) => {
+  try {
+    const { id } = req.params; // order._id from MongoDB
+
+    const order = await Order.findById(id)
+      .populate("user", "name email")
+      .populate("items.product", "name price image");
+
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    res.status(200).json({ success: true, order });
+  } catch (err) {
+    console.error("Error fetching single order:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
