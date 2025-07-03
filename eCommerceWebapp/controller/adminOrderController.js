@@ -36,6 +36,7 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
+    order.isPaid = isPaid;
 
     if (typeof isPaid === "boolean") {
       order.isPaid = isPaid;
