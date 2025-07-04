@@ -51,18 +51,33 @@ export const updateOrderStatus = async (req, res) => {
   }
 };
 
+import Order from "../models/orderModel.js"; // make sure this is imported
+
 export const getAllReturnRequests = async (req, res) => {
   try {
-    const requests = await returnRequestSchema
-      .find()
-      .sort({ createdAt: -1 })
+    const orders = await Order.find({ "returnRequests.0": { $exists: true } })
       .populate("user", "name email")
-      .populate("product", "name price image");
+      .populate("returnRequests.productId", "name price image");
 
-    res.status(200).json({ success: true, requests });
+    const allRequests = [];
+
+    orders.forEach((order) => {
+      order.returnRequests.forEach((r) => {
+        allRequests.push({
+          user: order.user,
+          product: r.productId,
+          reason: r.reason,
+          customNote: r.customNote,
+          createdAt: r.requestedAt,
+        });
+      });
+    });
+
+    res.status(200).json({ success: true, requests: allRequests });
   } catch (err) {
+    console.error("Error in getAllReturnRequests:", err);
     res
       .status(500)
-      .json({ success: false, message: "Failed to fetch requests" });
+      .json({ success: false, message: "Failed to fetch return requests" });
   }
 };
