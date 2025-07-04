@@ -1,4 +1,4 @@
-import Order, { returnRequestSchema } from "../models/Order.js";
+import Order from "../models/Order.js";
 import userModel from "../models/userModel.js";
 
 // GET all orders (admin view)
@@ -50,8 +50,6 @@ export const updateOrderStatus = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to update order" });
   }
 };
-
-import Order from "../models/orderModel.js"; // make sure this is imported
 
 export const getAllReturnRequests = async (req, res) => {
   try {
