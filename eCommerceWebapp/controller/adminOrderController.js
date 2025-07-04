@@ -1,5 +1,5 @@
 import Order from "../models/Order.js";
-import Product from "../models/ProductModel.js";
+import "../models/ProductModel.js";
 import userModel from "../models/userModel.js";
 
 // GET all orders (admin view)
