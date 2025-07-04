@@ -61,7 +61,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
         const { data } = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/v1/category/get-category`
         );
-        console.log("Categories from API:", data);
         if (data.success) {
           setCategories(data.category);
         }
@@ -72,10 +71,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
 
     fetchCategories();
   }, []);
-  console.log(categories);
 
   const cid = useParams();
-  console.log(cid);
 
   return (
     <div className="min-w-fit">
@@ -402,6 +399,22 @@ function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                                 Orders
+                              </span>
+                            </NavLink>
+                          </li>
+                          <li className="mb-1 last:mb-0">
+                            <NavLink
+                              end
+                              to="/return-requests"
+                              className={({ isActive }) =>
+                                "block transition duration-150 truncate " +
+                                (isActive
+                                  ? "text-violet-500"
+                                  : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
+                              }
+                            >
+                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                                Return Requests
                               </span>
                             </NavLink>
                           </li>
