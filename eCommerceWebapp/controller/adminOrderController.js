@@ -1,4 +1,5 @@
 import Order from "../models/Order.js";
+import Product from "../models/ProductModel.js";
 import userModel from "../models/userModel.js";
 
 // GET all orders (admin view)
@@ -55,7 +56,7 @@ export const getAllReturnRequests = async (req, res) => {
   try {
     const orders = await Order.find({ "returnRequests.0": { $exists: true } })
       .populate("user", "name email")
-      .populate("returnRequests.productId", "name price image");
+      .populate("returnRequests.productId", "name price imageUrl");
 
     const allRequests = [];
 
