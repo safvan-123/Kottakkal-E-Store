@@ -1,4 +1,4 @@
-import Order from "../models/Order.js";
+import Order, { returnRequestSchema } from "../models/Order.js";
 import userModel from "../models/userModel.js";
 
 // GET all orders (admin view)
@@ -48,5 +48,21 @@ export const updateOrderStatus = async (req, res) => {
   } catch (error) {
     console.error("❌ Failed to update order:", error);
     res.status(500).json({ success: false, message: "Failed to update order" });
+  }
+};
+
+export const getAllReturnRequests = async (req, res) => {
+  try {
+    const requests = await returnRequestSchema
+      .find()
+      .sort({ createdAt: -1 })
+      .populate("user", "name email")
+      .populate("product", "name price image");
+
+    res.status(200).json({ success: true, requests });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch requests" });
   }
 };

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const returnRequestSchema = new mongoose.Schema(
+export const returnRequestSchema = new mongoose.Schema(
   {
     productId: {
       type: mongoose.Schema.Types.ObjectId,
