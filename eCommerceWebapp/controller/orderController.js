@@ -121,3 +121,56 @@ export const getSingleOrder = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
+
+export const handleProductReturn = async (req, res) => {
+  try {
+    const { orderId, productId, reason, customNote } = req.body;
+
+    if (!orderId || !productId || !reason) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields." });
+    }
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    // Optional: Verify the user owns this order
+    if (order.user.toString() !== req.user._id.toString()) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Unauthorized return attempt" });
+    }
+
+    // Optional: Check if order is within 7-day window
+    const createdAt = new Date(order.createdAt);
+    const now = new Date();
+    const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+    if (diffInDays > 7) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Return period expired." });
+    }
+
+    // You could save this info in a new "returns" array or collection
+    // For now, just log it or send success response
+    console.log("📦 Return Requested:", {
+      orderId,
+      productId,
+      reason,
+      customNote,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Return request received.",
+    });
+  } catch (error) {
+    console.error("Return request failed:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
