@@ -125,6 +125,7 @@ export const getSingleOrder = async (req, res) => {
 export const handleProductReturn = async (req, res) => {
   try {
     const { orderId, productId, reason, customNote } = req.body;
+    console.log(orderId, productId, reason, customNote);
 
     if (!orderId || !productId || !reason) {
       return res
