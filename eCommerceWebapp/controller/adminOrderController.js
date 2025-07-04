@@ -1,12 +1,12 @@
 import Order from "../models/Order.js";
 import "../models/ProductModel.js";
-import userModel from "../models/userModel.js";
+import "../models/userModel.js";
 
 // GET all orders (admin view)
 export const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
-      .populate("user", "name email")
+      .populate("user", "name phone address")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, orders });
@@ -56,6 +56,7 @@ export const getAllReturnRequests = async (req, res) => {
   try {
     const orders = await Order.find({ "returnRequests.0": { $exists: true } })
       .populate("user", "name email")
+      .populate("user", "name email phone address")
       .populate("returnRequests.productId", "name price imageUrl");
 
     const allRequests = [];
@@ -63,6 +64,7 @@ export const getAllReturnRequests = async (req, res) => {
     orders.forEach((order) => {
       order.returnRequests.forEach((r) => {
         allRequests.push({
+          orderId: order.orderId,
           user: order.user,
           product: r.productId,
           reason: r.reason,
@@ -71,9 +73,9 @@ export const getAllReturnRequests = async (req, res) => {
         });
       });
     });
+    console.log(allRequests);
 
     res.status(200).json({ success: true, requests: allRequests });
-    console.log(allRequests);
   } catch (err) {
     console.error("Error in getAllReturnRequests:", err);
     res

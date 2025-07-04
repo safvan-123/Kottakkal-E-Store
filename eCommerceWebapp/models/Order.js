@@ -4,7 +4,7 @@ export const returnRequestSchema = new mongoose.Schema(
   {
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "product",
       required: true,
     },
     reason: { type: String, required: true },
