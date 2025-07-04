@@ -156,7 +156,14 @@ export const handleProductReturn = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Return period expired." });
     }
+    order.returnRequests.push({
+      productId,
+      reason,
+      customNote,
+      requestedAt: new Date(),
+    });
 
+    await order.save();
     // You could save this info in a new "returns" array or collection
     // For now, just log it or send success response
     console.log("📦 Return Requested:", {

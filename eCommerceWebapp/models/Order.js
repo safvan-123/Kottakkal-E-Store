@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+const returnRequestSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    reason: { type: String, required: true },
+    customNote: { type: String },
+    requestedAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
 const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   orderId: { type: Number, unique: true },
@@ -33,6 +46,7 @@ const orderSchema = new mongoose.Schema({
     enum: ["Order Confirmed", "Delivered", "Cancelled", "Pending"],
     default: "Order Confirmed",
   },
+  returnRequests: [returnRequestSchema],
   createdAt: { type: Date, default: Date.now },
 });
 
