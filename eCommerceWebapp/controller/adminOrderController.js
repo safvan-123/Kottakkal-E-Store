@@ -72,6 +72,7 @@ export const getAllReturnRequests = async (req, res) => {
     });
 
     res.status(200).json({ success: true, requests: allRequests });
+    console.log(allRequests);
   } catch (err) {
     console.error("Error in getAllReturnRequests:", err);
     res
