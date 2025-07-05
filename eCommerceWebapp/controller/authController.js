@@ -45,14 +45,17 @@ export const registerController = async (req, res) => {
     const hashedPassword = await hashPassword(password);
 
     // Create new user
-    const user = new userModel({
+    const userData = {
       name,
-      email: email || undefined,
-      phone: phone || undefined,
       address,
       password: hashedPassword,
       isGoogleUser: false,
-    });
+    };
+
+    if (email) userData.email = email;
+    if (phone) userData.phone = phone;
+
+    const user = new userModel(userData);
 
     await user.save();
 
