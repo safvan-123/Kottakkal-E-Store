@@ -8,47 +8,45 @@ export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
+    // Validate required fields
     if (!name) {
       return res
         .status(400)
-        .send({ success: false, message: "Name is required" });
+        .json({ success: false, message: "Name is required" });
     }
-    if (!email) {
+
+    if (!email && !phone) {
       return res
         .status(400)
-        .send({ success: false, message: "Email is required" });
+        .json({ success: false, message: "Email or phone is required" });
     }
+
     if (!password) {
       return res
         .status(400)
-        .send({ success: false, message: "Password is required" });
+        .json({ success: false, message: "Password is required" });
     }
-    // if (!phone) {
-    //   return res
-    //     .status(400)
-    //     .send({ success: false, message: "Phone is required" });
-    // }
-    // if (!address) {
-    //   return res
-    //     .status(400)
-    //     .send({ success: false, message: "Address is required" });
-    // }
 
-    // Check if user already exists
-    const existinguser = await userModel.findOne({ email });
-    if (existinguser) {
-      return res.status(409).send({
+    // Check for existing user with same email or phone
+    const existingUser = await userModel.findOne({
+      $or: [{ email: email || null }, { phone: phone || null }],
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
         success: false,
         message: "User already registered. Please login.",
       });
     }
 
-    // Register user
+    // Hash password
     const hashedPassword = await hashPassword(password);
-    const user = await new userModel({
+
+    // Create new user
+    const user = new userModel({
       name,
-      email,
-      phone,
+      email: email || undefined,
+      phone: phone || undefined,
       address,
       password: hashedPassword,
       isGoogleUser: false,
@@ -56,7 +54,8 @@ export const registerController = async (req, res) => {
 
     await user.save();
 
-    res.status(201).send({
+    // Success response
+    res.status(201).json({
       success: true,
       message: "User registered successfully",
       user: {
@@ -71,8 +70,8 @@ export const registerController = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({
+    console.error("❌ Registration Error:", error);
+    res.status(500).json({
       success: false,
       message: "Error in registration",
       error: error.message,
