@@ -28,19 +28,19 @@ export const registerController = async (req, res) => {
     }
 
     // Check for existing user with same email or phone
-  const queryConditions = [];
-if (email) queryConditions.push({ email });
-if (phone) queryConditions.push({ phone });
+    const queryConditions = [];
+    if (email) queryConditions.push({ email });
+    if (phone) queryConditions.push({ phone });
 
-if (queryConditions.length > 0) {
-  const existingUser = await userModel.findOne({ $or: queryConditions });
-    if (existingUser) {
-      return res.status(409).json({
-        success: false,
-        message: "User already registered. Please login.",
-      });
+    if (queryConditions.length > 0) {
+      const existingUser = await userModel.findOne({ $or: queryConditions });
+      if (existingUser) {
+        return res.status(409).json({
+          success: false,
+          message: "User already registered. Please login.",
+        });
+      }
     }
-
     // Hash password
     const hashedPassword = await hashPassword(password);
 
