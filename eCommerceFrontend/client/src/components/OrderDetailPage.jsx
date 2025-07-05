@@ -27,7 +27,7 @@ const OrderDetailsPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5050/api/orders/my-orders/${id}`,
+          ` ${import.meta.env.VITE_API_URL}/api/orders/my-orders/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -65,22 +65,25 @@ const OrderDetailsPage = () => {
     }
     // ${import.meta.env.VITE_API_URL}
     try {
-      const res = await fetch(`http://localhost:5050/api/orders/return`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "Cache-Control": "no-cache",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
-        body: JSON.stringify({
-          orderId: order._id,
-          productId: returnItem?.product?._id,
-          reason: selectedReason,
-          customNote: customReason,
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/orders/return`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+          body: JSON.stringify({
+            orderId: order._id,
+            productId: returnItem?.product?._id,
+            reason: selectedReason,
+            customNote: customReason,
+          }),
+        }
+      );
 
       const data = await res.json();
       if (data.success) {
