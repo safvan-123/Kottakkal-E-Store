@@ -23,16 +23,16 @@ export const registerController = async (req, res) => {
         .status(400)
         .send({ success: false, message: "Password is required" });
     }
-    if (!phone) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Phone is required" });
-    }
-    if (!address) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Address is required" });
-    }
+    // if (!phone) {
+    //   return res
+    //     .status(400)
+    //     .send({ success: false, message: "Phone is required" });
+    // }
+    // if (!address) {
+    //   return res
+    //     .status(400)
+    //     .send({ success: false, message: "Address is required" });
+    // }
 
     // Check if user already exists
     const existinguser = await userModel.findOne({ email });
