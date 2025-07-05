@@ -101,6 +101,7 @@ export const getSingleOrder = async (req, res) => {
     const order = await Order.findById(id)
       .populate("user", "name email")
       .populate("items.product", "name price image");
+    console.log(order);
 
     if (!order) {
       return res
@@ -114,8 +115,22 @@ export const getSingleOrder = async (req, res) => {
         .status(403)
         .json({ success: false, message: "Access denied to this order" });
     }
+    const itemsWithReturns = order.items.map((item) => {
+      const matchingReturn = order.returnRequests.find(
+        (rr) => rr.productId.toString() === item.product._id.toString()
+      );
+      return {
+        ...item.toObject(),
+        returnRequest: matchingReturn || null, // add returnRequest or null
+      };
+    });
 
-    res.status(200).json({ success: true, order });
+    // Return modified order object
+    const modifiedOrder = {
+      ...order.toObject(),
+      items: itemsWithReturns,
+    };
+    res.status(200).json({ success: true, order: modifiedOrder });
   } catch (err) {
     console.error("Error fetching single order:", err);
     res.status(500).json({ success: false, error: err.message });
