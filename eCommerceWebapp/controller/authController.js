@@ -28,10 +28,12 @@ export const registerController = async (req, res) => {
     }
 
     // Check for existing user with same email or phone
-    const existingUser = await userModel.findOne({
-      $or: [{ email: email || null }, { phone: phone || null }],
-    });
+  const queryConditions = [];
+if (email) queryConditions.push({ email });
+if (phone) queryConditions.push({ phone });
 
+if (queryConditions.length > 0) {
+  const existingUser = await userModel.findOne({ $or: queryConditions });
     if (existingUser) {
       return res.status(409).json({
         success: false,
