@@ -6,7 +6,7 @@ const ReturnRequests = () => {
   const [error, setError] = useState("");
 
   //   const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
-  const API_BASE_URL = "http://localhost:5050";
+  const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
 
   const fetchReturnRequests = async () => {
     try {
@@ -16,6 +16,9 @@ const ReturnRequests = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
           },
         }
       );

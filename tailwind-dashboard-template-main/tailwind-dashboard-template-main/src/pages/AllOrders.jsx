@@ -20,6 +20,9 @@ const AllOrders = () => {
       const { data } = await axios.get(`${API_BASE_URL}/orders`, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       });
       if (data.success) {
@@ -56,6 +59,9 @@ const AllOrders = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
           },
         }
       );
