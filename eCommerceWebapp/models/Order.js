@@ -10,6 +10,8 @@ export const returnRequestSchema = new mongoose.Schema(
     reason: { type: String, required: true },
     customNote: { type: String },
     requestedAt: { type: Date, default: Date.now },
+    isDelivered: { type: Boolean, default: false }, // ✅ NEW FIELD
+    deliveredAt: { type: Date }, // ✅ Optional timestamp
   },
   { _id: false }
 );

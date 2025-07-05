@@ -6,7 +6,7 @@ import crypto from "crypto";
 
 export const registerController = async (req, res) => {
   try {
-    const { name, email, password, phone, address, answer } = req.body;
+    const { name, email, password, phone, address } = req.body;
 
     if (!name) {
       return res
@@ -33,11 +33,6 @@ export const registerController = async (req, res) => {
         .status(400)
         .send({ success: false, message: "Address is required" });
     }
-    if (!answer) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Answer is required" });
-    }
 
     // Check if user already exists
     const existinguser = await userModel.findOne({ email });
@@ -56,7 +51,6 @@ export const registerController = async (req, res) => {
       phone,
       address,
       password: hashedPassword,
-      answer,
       isGoogleUser: false,
     });
 
@@ -158,18 +152,14 @@ export const loginController = async (req, res) => {
 //forgot password controller
 export const forgotPasswordController = async (req, res) => {
   try {
-    const { email, answer, newPassword } = req.body;
+    const { email, newPassword } = req.body;
 
     if (!email) {
       return res
         .status(400)
         .send({ success: false, message: "Email is required" });
     }
-    if (!answer) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Answer is required" });
-    }
+
     if (!newPassword) {
       return res
         .status(400)
@@ -177,7 +167,7 @@ export const forgotPasswordController = async (req, res) => {
     }
 
     // checking
-    const user = await userModel.findOne({ email, answer });
+    const user = await userModel.findOne({ email });
 
     //validation
     if (!user) {

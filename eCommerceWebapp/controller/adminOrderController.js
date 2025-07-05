@@ -65,10 +65,12 @@ export const getAllReturnRequests = async (req, res) => {
       order.returnRequests.forEach((r) => {
         allRequests.push({
           orderId: order.orderId,
+          orderMongoId: order._id,
           user: order.user,
           product: r.productId,
           reason: r.reason,
           customNote: r.customNote,
+          isDelivered: r.isDelivered,
           createdAt: r.requestedAt,
         });
       });
@@ -81,5 +83,44 @@ export const getAllReturnRequests = async (req, res) => {
     res
       .status(500)
       .json({ success: false, message: "Failed to fetch return requests" });
+  }
+};
+
+export const updateReturnDeliveryStatus = async (req, res) => {
+  const { orderId, productId } = req.params;
+  const { isDelivered } = req.body;
+  console.log(orderId, productId, isDelivered);
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order not found" });
+    }
+
+    const returnItem = order.returnRequests.find(
+      (r) => r.productId.toString() === productId
+    );
+
+    if (!returnItem) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Return item not found" });
+    }
+
+    returnItem.isDelivered = isDelivered;
+    returnItem.deliveredAt = isDelivered ? new Date() : null;
+
+    await order.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Return delivery status updated",
+      returnItem,
+    });
+  } catch (err) {
+    console.error("❌ Error updating return delivery status:", err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
