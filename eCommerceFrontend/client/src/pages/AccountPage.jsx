@@ -42,6 +42,9 @@ export default function Account() {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
           },
           body: JSON.stringify(updatedFields),
         }

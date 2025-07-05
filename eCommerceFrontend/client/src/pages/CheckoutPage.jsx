@@ -146,6 +146,9 @@ const CheckoutPage = () => {
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
             },
           }
         );
@@ -248,6 +251,9 @@ const CheckoutPage = () => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
         body: JSON.stringify(orderDetails),
       });
@@ -303,6 +309,9 @@ const CheckoutPage = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
             },
             body: JSON.stringify({
               amount: cartTotal,

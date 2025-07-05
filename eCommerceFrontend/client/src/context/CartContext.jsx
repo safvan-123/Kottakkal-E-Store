@@ -35,6 +35,9 @@ export const CartProvider = ({ children }) => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const { data } = await axios.get(CART_API_BASE_URL, config);
@@ -97,6 +100,9 @@ export const CartProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const payload = {
@@ -153,6 +159,9 @@ export const CartProvider = ({ children }) => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const { data } = await axios.delete(
@@ -221,6 +230,9 @@ export const CartProvider = ({ children }) => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const payload = { quantity: newQuantity };
@@ -266,6 +278,9 @@ export const CartProvider = ({ children }) => {
       const config = {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const { data } = await axios.delete(CART_API_BASE_URL, config);

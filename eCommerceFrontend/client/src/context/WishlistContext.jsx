@@ -36,6 +36,9 @@ export const WishlistProvider = ({ children }) => {
         const config = {
           headers: {
             Authorization: `Bearer ${currentToken}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
           },
         };
         const response = await axios.get(
@@ -78,6 +81,9 @@ export const WishlistProvider = ({ children }) => {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${currentToken}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
       const response = await axios.post(
@@ -106,8 +112,12 @@ export const WishlistProvider = ({ children }) => {
       const config = {
         headers: {
           Authorization: `Bearer ${currentToken}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
         },
       };
+
       const response = await axios.delete(
         `${import.meta.env.VITE_API_URL}/api/v1/wishlist/${productId}`,
         config

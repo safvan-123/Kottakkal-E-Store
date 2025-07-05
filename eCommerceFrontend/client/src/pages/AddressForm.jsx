@@ -23,7 +23,12 @@ const AddressForm = () => {
         const { data } = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/v1/address`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
           }
         );
         if (data.address) setForm(data.address);
@@ -45,7 +50,12 @@ const AddressForm = () => {
         `${import.meta.env.VITE_API_URL}/api/v1/address/update`,
         form,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
         }
       );
       alert("Address saved!");

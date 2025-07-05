@@ -55,6 +55,9 @@ export default function OrderSuccessPage() {
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
             },
           }
         );
@@ -77,6 +80,9 @@ export default function OrderSuccessPage() {
           {
             headers: {
               Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
             },
           }
         );

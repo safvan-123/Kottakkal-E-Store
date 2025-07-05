@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import {
+  FaBoxOpen,
   FaCheckCircle,
   FaClock,
   FaMoneyCheckAlt,
@@ -26,9 +27,14 @@ const OrderDetailsPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/orders/my-orders/${id}`,
+          `http://localhost:5050/api/orders/my-orders/${id}`,
           {
-            headers: { Authorization: `Bearer ${token}` },
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Cache-Control": "no-cache",
+              Pragma: "no-cache",
+              Expires: "0",
+            },
           }
         );
 
@@ -49,6 +55,7 @@ const OrderDetailsPage = () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   }, [showModal]);
+  console.log(order);
 
   // Handle return submission
   const handleReturnSubmit = async () => {
@@ -56,24 +63,24 @@ const OrderDetailsPage = () => {
       toast.warning("Please select a return reason.");
       return;
     }
-
+    // ${import.meta.env.VITE_API_URL}
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/orders/return`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            orderId: order._id,
-            productId: returnItem?.product?._id,
-            reason: selectedReason,
-            customNote: customReason,
-          }),
-        }
-      );
+      const res = await fetch(`http://localhost:5050/api/orders/return`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+        body: JSON.stringify({
+          orderId: order._id,
+          productId: returnItem?.product?._id,
+          reason: selectedReason,
+          customNote: customReason,
+        }),
+      });
 
       const data = await res.json();
       if (data.success) {
@@ -154,43 +161,94 @@ const OrderDetailsPage = () => {
           Items in this order
         </h3>
         <ul className="space-y-5">
-          {order.items.map((item, idx) => (
-            <li
-              key={idx}
-              className="flex items-center justify-between gap-4 bg-gray-50 hover:bg-gray-100 transition rounded-lg p-4"
-            >
-              <div className="flex items-center gap-4">
-                <img
-                  src={item?.product?.image}
-                  alt={item?.product?.name}
-                  className="w-16 h-16 rounded-lg object-cover shadow-sm"
-                />
-                <div>
-                  <p className="text-gray-800 font-medium text-sm">
-                    {item?.product?.name}
-                  </p>
-                  <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
+          {order.items.map((item, idx) => {
+            const isReturned = item?.returnRequest;
+            console.log(isReturned);
+
+            return (
+              <li
+                key={idx}
+                className="flex items-center justify-between gap-4 bg-gray-50 hover:bg-gray-100 transition rounded-lg p-4"
+              >
+                <div className="flex items-center gap-4">
+                  <img
+                    src={item?.product?.image}
+                    alt={item?.product?.name}
+                    className="w-16 h-16 rounded-lg object-cover shadow-sm"
+                  />
+                  <div>
+                    <p className="text-gray-800 font-medium text-sm">
+                      {item?.product?.name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="text-blue-700 font-semibold text-sm mr-2">
-                  ₹{item?.product?.price}
-                </p>
-                {isReturnEligible(order.createdAt) && (
-                  <button
-                    onClick={() => {
-                      setReturnItem(item);
-                      setShowModal(true);
-                    }}
-                    className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
-                  >
-                    <FaUndoAlt className="text-sm" />
-                    Return
-                  </button>
-                )}
-              </div>
-            </li>
-          ))}
+                <div className="text-right">
+                  <p className="text-blue-700 font-semibold text-sm mr-2">
+                    ₹{item?.product?.price}
+                  </p>
+                  {/* {isReturnEligible(order.createdAt) && (
+                    <button
+                      onClick={() => {
+                        setReturnItem(item);
+                        setShowModal(true);
+                      }}
+                      className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
+                    >
+                      <FaUndoAlt className="text-sm" />
+                      Return
+                    </button>
+                  )} */}
+                  {isReturnEligible(order.createdAt) &&
+                    (item.returnRequest ? (
+                      <div className="mt-2 ml-2">
+                        <button
+                          disabled
+                          className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+                        >
+                          <FaBoxOpen className="text-sm" />
+                          <span className="tracking-wide">
+                            Pickup Scheduled
+                          </span>
+                        </button>
+
+                        {(() => {
+                          const requestTime = new Date(
+                            item.returnRequest.requestedAt
+                          );
+                          const now = new Date();
+                          const diffInMs = now - requestTime;
+                          const diffInHours = diffInMs / (1000 * 60 * 60);
+
+                          if (diffInHours <= 24) {
+                            return (
+                              <p className="text-[11px] text-gray-500 mt-1">
+                                The product will be picked up within 24 hours.
+                              </p>
+                            );
+                          }
+
+                          return null;
+                        })()}
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setReturnItem(item);
+                          setShowModal(true);
+                        }}
+                        className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
+                      >
+                        <FaUndoAlt className="text-sm" />
+                        Return
+                      </button>
+                    ))}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       </div>
 

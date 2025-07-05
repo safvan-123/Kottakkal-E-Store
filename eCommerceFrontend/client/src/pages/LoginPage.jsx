@@ -23,7 +23,12 @@ export default function LoginPage() {
         `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
           body: JSON.stringify({ email, password }),
         }
       );
@@ -53,7 +58,12 @@ export default function LoginPage() {
         `${import.meta.env.VITE_API_URL}/api/v1/auth/google-login`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
           body: JSON.stringify({ credential: token }),
         }
       );
