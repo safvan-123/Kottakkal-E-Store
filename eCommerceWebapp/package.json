@@ -15,7 +15,9 @@
   "description": "",
   "dependencies": {
     "antd": "^5.25.1",
+    "axios": "^1.10.0",
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cloudinary": "^2.6.1",
     "colors": "^1.4.0",
     "concurrently": "^9.1.2",

@@ -16,6 +16,7 @@ import contactRoutes from "./routes/contactRoutes.js";
 import pincodeRoutes from "./routes/pincodeRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
+import { sendWhatsappMessage } from "./whatsapp-reset-message/sendWhatsappMessage.js";
 
 dotenv.config();
 
@@ -62,7 +63,10 @@ app.get("/", (req, res) => {
   console.log("GET / route hit");
   res.send("welcome ");
 });
+// const phone = "919876543210"; // ✅ your test phone number (no +, no space)
+// const message = "🔐 Reset your password: https://yourapp.com/reset/abc123";
 
+// sendWhatsappMessage(phone, message);
 const PORT = process.env.PORT || 5050;
 
 app.listen(PORT, () => {

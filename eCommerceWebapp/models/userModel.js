@@ -1,4 +1,5 @@
 import mongoose, { Types } from "mongoose";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
@@ -10,15 +11,17 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       unique: true,
-      sparse: true, // allows multiple nulls
+      sparse: true,
       lowercase: true,
       trim: true,
+      default: undefined, // ⬅️ this avoids null
     },
-
     phone: {
       type: String,
       unique: true,
-      sparse: true, // allows multiple nulls
+      sparse: true,
+      trim: true,
+      default: undefined, // ⬅️ this avoids null
     },
 
     password: {
@@ -53,6 +56,8 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    resetToken: String,
+    resetTokenExpiry: Date,
   },
   {
     timestamps: true,
@@ -64,6 +69,13 @@ userSchema.pre("validate", function (next) {
   if (!this.email && !this.phone) {
     this.invalidate("email", "Either email or phone number is required");
   }
+  next();
+});
+
+// Hash password before saving
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 

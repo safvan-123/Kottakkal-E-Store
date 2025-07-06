@@ -3,7 +3,6 @@ import {
   registerController,
   loginController,
   testController,
-  forgotPasswordController,
   getAllUsersController,
   updateUserRoleController,
   toggleBlockStatusController,
@@ -11,6 +10,8 @@ import {
   getUserDetailsController,
   googleLoginController,
   updateProfile,
+  forgotPassword,
+  resetPassword,
 } from "../controller/authController.js";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -22,8 +23,8 @@ router.post("/login", loginController);
 
 //Forgot password || post is the  method
 
-router.post("/forgot-password", forgotPasswordController);
-
+router.post("/forgot-password", forgotPassword);
+router.post("/reset-password/:token", resetPassword);
 //test Route
 
 router.get("/test", requireSignIn, isAdmin, testController);

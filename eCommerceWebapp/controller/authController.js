@@ -3,12 +3,13 @@ import { comparePassword, hashPassword } from "../helpers/authHelper.js";
 import JWT from "jsonwebtoken";
 import { OAuth2Client } from "google-auth-library";
 import crypto from "crypto";
+import { sendResetToken } from "../utils/sendResetToken.js";
 
 export const registerController = async (req, res) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
-    // Validate required fields
+    // ✅ Field validation
     if (!name) {
       return res
         .status(400)
@@ -27,47 +28,59 @@ export const registerController = async (req, res) => {
         .json({ success: false, message: "Password is required" });
     }
 
-    // Check for existing user with same email or phone
+    // ✅ Check if user exists
     const queryConditions = [];
     if (email) queryConditions.push({ email });
     if (phone) queryConditions.push({ phone });
 
-    if (queryConditions.length > 0) {
-      const existingUser = await userModel.findOne({ $or: queryConditions });
-      if (existingUser) {
-        return res.status(409).json({
-          success: false,
-          message: "User already registered. Please login.",
-        });
-      }
+    const existingUser = await userModel.findOne({ $or: queryConditions });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "User already registered. Please login.",
+      });
     }
-    // Hash password
+
+    // ✅ Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create new user
+    // ✅ Construct userData safely
     const userData = {
       name,
-      address,
       password: hashedPassword,
+      address,
       isGoogleUser: false,
     };
 
-    if (email) userData.email = email;
-    if (phone) userData.phone = phone;
+    // ✅ Add email/phone only if valid strings
+    if (typeof email === "string" && email.trim() !== "") {
+      userData.email = email.trim().toLowerCase();
+    }
 
+    if (typeof phone === "string" && phone.trim() !== "") {
+      userData.phone = phone.trim();
+    }
+
+    // ✅ Hard remove undefined/null email/phone
+    if (userData.email == null) delete userData.email;
+    if (userData.phone == null) delete userData.phone;
+
+    console.log("final userData", userData);
+
+    // ✅ Save user
     const user = new userModel(userData);
-
     await user.save();
 
-    // Success response
+    // ✅ Success response
     res.status(201).json({
       success: true,
       message: "User registered successfully",
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email,
-        phone: user.phone,
+        ...(user.email && { email: user.email }),
+        ...(user.phone && { phone: user.phone }),
         address: user.address,
         role: user.role,
         blocked: user.blocked,
@@ -84,28 +97,34 @@ export const registerController = async (req, res) => {
   }
 };
 
-//POST method for LOGIN
 export const loginController = async (req, res) => {
+  console.log(req.body);
   try {
-    const { email, password } = req.body;
+    const { contact, password } = req.body; // contact = email or phone
 
-    if (!email || !password) {
+    if (!contact || !password) {
       return res.status(400).send({
         success: false,
-        message: "Invalid email or password",
+        message: "Email or phone and password are required",
       });
     }
 
+    // Determine if contact is email or phone
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const query = emailRegex.test(contact)
+      ? { email: contact.toLowerCase().trim() }
+      : { phone: contact.trim() };
+
     // Check user
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne(query);
     if (!user) {
       return res.status(404).send({
         success: false,
-        message: "Email not registered",
+        message: "Account not found. Please register.",
       });
     }
 
-    // Check if user is a Google user and disallow traditional login
+    // Disallow traditional login for Google users
     if (user.isGoogleUser) {
       return res.status(401).send({
         success: false,
@@ -114,7 +133,7 @@ export const loginController = async (req, res) => {
       });
     }
 
-    // Decryption and password match
+    // Compare password
     const match = await comparePassword(password, user.password);
     if (!match) {
       return res.status(401).send({
@@ -123,7 +142,7 @@ export const loginController = async (req, res) => {
       });
     }
 
-    // Token
+    // Generate token
     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
@@ -134,8 +153,8 @@ export const loginController = async (req, res) => {
       user: {
         _id: user._id,
         name: user.name,
-        email: user.email,
-        phone: user.phone,
+        ...(user.email ? { email: user.email } : {}),
+        ...(user.phone ? { phone: user.phone } : {}),
         address: user.address,
         role: user.role,
         blocked: user.blocked,
@@ -144,7 +163,7 @@ export const loginController = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log(error);
+    console.log("❌ Login error:", error);
     res.status(500).send({
       success: false,
       message: "Error in login",
@@ -154,51 +173,54 @@ export const loginController = async (req, res) => {
 };
 
 //forgot password controller
-export const forgotPasswordController = async (req, res) => {
-  try {
-    const { email, newPassword } = req.body;
 
-    if (!email) {
-      return res
-        .status(400)
-        .send({ success: false, message: "Email is required" });
-    }
+// POST /api/v1/auth/forgot-password
+export const forgotPassword = async (req, res) => {
+  const { contact } = req.body;
+  console.log(contact);
 
-    if (!newPassword) {
-      return res
-        .status(400)
-        .send({ success: false, message: "New password is required" });
-    }
-
-    // checking
-    const user = await userModel.findOne({ email });
-
-    //validation
-    if (!user) {
-      return res.status(404).send({
-        success: false,
-        message: "Wrong email or answer",
-      });
-    }
-
-    const hashed = await hashPassword(newPassword);
-    await userModel.findByIdAndUpdate(
-      user._id,
-      { password: hashed },
-      { new: true }
-    ); // Added new: true to return updated doc
-    res.status(200).send({
-      success: true,
-      message: "Password reset successful",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({
-      success: false,
-      message: "Something went wrong",
-      error: error.message,
-    });
+  if (!contact) {
+    return res.status(400).json({ message: "Email or phone is required." });
   }
+
+  const user = await userModel.findOne({
+    $or: [{ email: contact }, { phone: contact }],
+  });
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found." });
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  user.resetToken = token;
+  user.resetTokenExpiry = Date.now() + 1000 * 60 * 30; // 30 mins
+  await user.save();
+
+  await sendResetToken({ user, token });
+
+  res.status(200).json({ message: "Reset link has been sent." });
+};
+
+// POST /api/v1/auth/reset-password/:token
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const user = await userModel.findOne({
+    resetToken: token,
+    resetTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid or expired token." });
+  }
+
+  user.password = password;
+  user.resetToken = undefined;
+  user.resetTokenExpiry = undefined;
+  await user.save();
+
+  res.status(200).json({ message: "Password has been reset successfully." });
 };
 
 //test controller
