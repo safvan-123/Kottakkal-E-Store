@@ -2,23 +2,31 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
+  const [contact, setContact] = useState("");
   const [password, setPassword] = useState("");
+
   const [errorMsg, setErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
-  const handleEmailLogin = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg("");
     setLoading(true);
 
     try {
+      // Create payload with 'contact' key instead of 'email'
+      const payload = {
+        contact: contact.trim(), // can be email or phone
+        password,
+      };
+
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/v1/auth/login`,
         {
@@ -29,18 +37,19 @@ export default function LoginPage() {
             Pragma: "no-cache",
             Expires: "0",
           },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify(payload),
         }
       );
-      console.log(res);
 
       const data = await res.json();
+
       if (!res.ok) throw new Error(data.message);
 
+      // Save token and user to context or localStorage
       login(data.token, data.user);
       navigate("/");
     } catch (err) {
-      console.error("Email login failed:", err);
+      console.error("Login failed:", err);
       setErrorMsg(err.message || "Login failed");
     } finally {
       setLoading(false);
@@ -94,12 +103,13 @@ export default function LoginPage() {
           </p>
         )}
 
-        <form onSubmit={handleEmailLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-6">
           <input
-            type="email"
-            placeholder="Your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            name="contact"
+            placeholder="Email or Mobile Number"
+            value={contact}
+            onChange={(e) => setContact(e.target.value)}
             className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out text-lg"
             required
           />
@@ -111,6 +121,15 @@ export default function LoginPage() {
             className="w-full px-5 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out text-lg"
             required
           />
+          <div className="flex justify-end text-sm">
+            <Link
+              to="/forgot-password"
+              className="text-blue-600 hover:underline transition duration-150 ease-in-out"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -146,6 +165,14 @@ export default function LoginPage() {
             size="large"
             theme="filled_blue"
           />
+        </div>
+        <div>
+          <p className="text-gray-600 text-sm mt-6">
+            Don&apos;t have an account?{" "}
+            <Link to="/register" className="text-blue-600 font-medium">
+              Register here
+            </Link>
+          </p>
         </div>
       </div>
     </div>

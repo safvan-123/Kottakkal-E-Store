@@ -20,6 +20,8 @@ import OfferSalesPage from "./components/OfferSalesPage";
 import AddressForm from "./pages/AddressForm";
 import OrderSuccessPage from "./pages/PurchaseSuccess";
 import OrderDetailPage from "./components/OrderDetailPage";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import ResetPasswordPage from "./components/ResetPasswordPage";
 
 function App() {
   return (
@@ -41,6 +43,8 @@ function App() {
         <Route path="/offersalepage" element={<OfferSalesPage />} />
         <Route path="/ordersuccess" element={<OrderSuccessPage />} />
         <Route path="/myorders/:id" element={<OrderDetailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       </Routes>
 
       <Footer />

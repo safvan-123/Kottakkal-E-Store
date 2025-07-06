@@ -27,7 +27,7 @@ const OrderDetailsPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
-          ` ${import.meta.env.VITE_API_URL}/api/orders/my-orders/${id}`,
+          `${import.meta.env.VITE_API_URL}/api/orders/my-orders/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -166,6 +166,8 @@ const OrderDetailsPage = () => {
         </h3>
         <ul className="space-y-5">
           {order.items.map((item, idx) => {
+            console.log(item);
+
             const isReturned = item?.returnRequest;
             console.log(isReturned);
 
@@ -206,7 +208,15 @@ const OrderDetailsPage = () => {
                     </button>
                   )} */}
                   {isReturnEligible(order.createdAt) &&
-                    (item.returnRequest ? (
+                    (item.returnRequest && item?.returnRequest?.isDelivered ? (
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+                      >
+                        <FaBoxOpen className="text-sm" />
+                        <span className="tracking-wide">Delivered</span>
+                      </button>
+                    ) : item?.returnRequest ? (
                       <div className="mt-2 ml-2">
                         <button
                           disabled
