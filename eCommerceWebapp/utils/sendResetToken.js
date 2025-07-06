@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 export const sendResetToken = async ({ user, token }) => {
   console.log(user);
 
-  const resetLink = `http://localhost:5173/reset-password/${token}`;
+  const resetLink = `https://kottakkal-e-store.onrender.com/reset-password/${token}`;
   console.log("🔗 Reset Link:", resetLink);
 
   const transporter = nodemailer.createTransport({
