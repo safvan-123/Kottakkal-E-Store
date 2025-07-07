@@ -10,6 +10,7 @@ export default function ForgotPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    // `${import.meta.env.VITE_API_URL}
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/api/v1/auth/forgot-password`,
@@ -22,7 +23,7 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       toast.success(data.message || "Reset link sent!");
-      navigate("/reset-password/123");
+      // navigate("/reset-password/123");
     } catch (err) {
       toast.error(err.message || "Failed to send reset link");
     } finally {
