@@ -1,9 +1,7 @@
 import nodemailer from "nodemailer";
 
 export const sendResetToken = async ({ user, token }) => {
-  console.log(user);
-
-  const resetLink = `https://kottakkal-e-store.onrender.com/reset-password/${token}`;
+  const resetLink = `https://kottakkal-e-store.vercel.app/reset-password/${token}`;
   console.log("🔗 Reset Link:", resetLink);
 
   const transporter = nodemailer.createTransport({

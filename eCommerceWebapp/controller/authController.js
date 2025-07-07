@@ -44,6 +44,8 @@ export const registerController = async (req, res) => {
 
     // ✅ Hash password
     const hashedPassword = await hashPassword(password);
+    console.log("🔐 Plain password:", password);
+    console.log("🔐 Hashed password:", hashedPassword);
 
     // ✅ Construct userData safely
     const userData = {
@@ -71,6 +73,7 @@ export const registerController = async (req, res) => {
     // ✅ Save user
     const user = new userModel(userData);
     await user.save();
+    console.log("✅ User saved in DB:", user);
 
     // ✅ Success response
     res.status(201).json({
@@ -98,7 +101,6 @@ export const registerController = async (req, res) => {
 };
 
 export const loginController = async (req, res) => {
-  console.log(req.body);
   try {
     const { contact, password } = req.body; // contact = email or phone
 
@@ -117,6 +119,8 @@ export const loginController = async (req, res) => {
 
     // Check user
     const user = await userModel.findOne(query);
+    console.log("find user", user);
+
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -135,7 +139,11 @@ export const loginController = async (req, res) => {
 
     // Compare password
     const match = await comparePassword(password, user.password);
+    console.log("🧠 Comparing:", password, "vs", user.password);
+    console.log("🔍 Match result:", match);
+
     if (!match) {
+      console.log("❌ Invalid password for:", contact);
       return res.status(401).send({
         success: false,
         message: "Invalid password",
@@ -205,17 +213,19 @@ export const forgotPassword = async (req, res) => {
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
-
+  console.log("🔐 Incoming token:", token);
+  console.log("🕒 Current time:", new Date());
   const user = await userModel.findOne({
     resetToken: token,
     resetTokenExpiry: { $gt: Date.now() },
   });
 
   if (!user) {
+    console.log("❌ No valid user found with token or token expired");
     return res.status(400).json({ message: "Invalid or expired token." });
   }
-
-  user.password = password;
+  const hashedPassword = await hashPassword(password);
+  user.password = hashedPassword;
   user.resetToken = undefined;
   user.resetTokenExpiry = undefined;
   await user.save();
