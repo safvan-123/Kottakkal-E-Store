@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function ForgotPasswordPage() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [contact, setContact] = useState("");
   const [loading, setLoading] = useState(false);
+  const [messageSent, setMessageSent] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setMessageSent(true);
     // `${import.meta.env.VITE_API_URL}
     try {
       const res = await fetch(
@@ -57,6 +59,13 @@ export default function ForgotPasswordPage() {
             {loading ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
+        {messageSent && (
+          <div className="mt-6 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
+            ✅ A reset link has been sent to your registered email or phone.
+            Please check your inbox or SMS and follow the instructions to reset
+            your password.
+          </div>
+        )}
       </div>
     </div>
   );
