@@ -50,7 +50,6 @@ export default function AddEditProductPage() {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
   // Image Upload Handler (Cloudinary)
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]; // single file only
