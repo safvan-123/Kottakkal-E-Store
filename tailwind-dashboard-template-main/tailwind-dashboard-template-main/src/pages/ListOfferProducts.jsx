@@ -1,27 +1,39 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaEdit } from "react-icons/fa";
+import { useSearchParams } from "react-router-dom";
 
 const OfferProducts = () => {
+  const [searchParams] = useSearchParams();
+  const pageFromQuery = searchParams.get("page");
   const [offerProducts, setOfferProducts] = useState([]);
   const [filteredOffers, setFilteredOffers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10); // can make dynamic
+  const [pagination, setPagination] = useState({ total: 0, totalPages: 0 });
 
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [newOfferPercentage, setNewOfferPercentage] = useState("");
+  console.log(selectedOffer);
 
   // Fetch offer products
-  const fetchOffers = async () => {
+  const fetchOffers = async (currentPage = 1) => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/offer-products/getoffer-products`
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/offer-products/getoffer-products?page=${currentPage}&limit=${limit}`
       );
+
       if (data.success) {
-        setOfferProducts(data.offerProducts);
+        setOfferProducts(data);
         setFilteredOffers(data.offerProducts);
+        setPagination(data.pagination);
+        setPage(currentPage);
       } else {
         setError("Failed to load offer products.");
       }
@@ -33,24 +45,28 @@ const OfferProducts = () => {
   };
 
   useEffect(() => {
-    fetchOffers();
-  }, []);
+    const currentPage = parseInt(pageFromQuery) || 1;
+    fetchOffers(currentPage);
+  }, [pageFromQuery]);
+  console.log(offerProducts);
 
   // Search handler
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
+
     setSearchTerm(term);
     setFilteredOffers(
-      offerProducts.filter(
+      offerProducts?.offerProducts?.filter(
         (offer) =>
-          offer.product?.name.toLowerCase().includes(term) ||
-          offer.product?.category?.name.toLowerCase().includes(term)
+          offer?.product?.name.toLowerCase().includes(term) ||
+          offer.product?.masterCategory?.name.toLowerCase().includes(term)
       )
     );
   };
 
   // Calculate price after offer
   const calculateOfferPrice = (price, offer) => price - (price * offer) / 100;
+  // console.log(selectedOffer);
 
   // Update offer percentage
   const handleUpdateOffer = async () => {
@@ -62,11 +78,12 @@ const OfferProducts = () => {
       const { data } = await axios.put(
         `${import.meta.env.VITE_API_URL}/api/offer-products/${
           selectedOffer._id
-        }`,
+        }?page=${page}`,
         { offerPercentage: Number(newOfferPercentage) }
       );
+
       if (data.success) {
-        fetchOffers();
+        await fetchOffers(page);
         alert("Offer percentage updated!");
         setSelectedOffer(null);
         setNewOfferPercentage("");
@@ -141,8 +158,9 @@ const OfferProducts = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredOffers.map((offer, idx) => {
+                {filteredOffers?.map((offer, idx) => {
                   const product = offer.product;
+
                   const offerPrice = calculateOfferPrice(
                     product?.price || 0,
                     offer.offerPercentage
@@ -159,7 +177,10 @@ const OfferProducts = () => {
                       onClick={() => openOfferDetails(offer)}
                       title="Click to view details"
                     >
-                      <td className="px-4 py-2">{idx + 1}</td>
+                      <td className="px-4 py-2">
+                        {(page - 1) * limit + idx + 1}
+                      </td>
+
                       <td className="px-4 py-2">
                         {product?.imageUrl ? (
                           <img
@@ -172,7 +193,13 @@ const OfferProducts = () => {
                         )}
                       </td>
                       <td className="px-4 py-2">{product?.name}</td>
-                      <td className="px-4 py-2">{product?.category?.name}</td>
+                      {product && (
+                        <td className="px-4 py-2">
+                          {product?.masterCategory?.name +
+                            " , " +
+                            product?.subCategory?.name}
+                        </td>
+                      )}
                       <td className="px-4 py-2">₹{product?.price}</td>
                       <td className="px-4 py-2">{offer.offerPercentage}%</td>
                       <td className="px-4 py-2 text-green-600 font-semibold">
@@ -203,6 +230,45 @@ const OfferProducts = () => {
               </tbody>
             </table>
           )}
+          {/* Pagination Controls */}
+          <div className="flex justify-center items-center mt-6 space-x-2 text-sm">
+            <button
+              onClick={() => fetchOffers(1)}
+              disabled={page === 1}
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
+            >
+              First
+            </button>
+
+            <button
+              onClick={() => fetchOffers(page - 1)}
+              disabled={page === 1}
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
+            >
+              Prev
+            </button>
+
+            <span className="px-4 py-1 text-gray-800 dark:text-white font-medium">
+              Page <span className="font-bold">{page}</span> of{" "}
+              <span className="font-bold">{pagination.totalPages}</span>
+            </span>
+
+            <button
+              onClick={() => fetchOffers(page + 1)}
+              disabled={page === pagination.totalPages}
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
+            >
+              Next
+            </button>
+
+            <button
+              onClick={() => fetchOffers(pagination.totalPages)}
+              disabled={page === pagination.totalPages}
+              className="px-3 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50"
+            >
+              Last
+            </button>
+          </div>
         </div>
 
         {/* Right side: Offer Product Details and Edit Offer */}
@@ -223,7 +289,8 @@ const OfferProducts = () => {
             <div className="flex flex-col gap-3 text-gray-800 dark:text-gray-200 mb-6 w-full text-left">
               <p>
                 <strong>Category:</strong>{" "}
-                {selectedOffer.product?.category?.name}
+                {selectedOffer.product?.masterCategory?.name} ,{" "}
+                {selectedOffer.product?.subCategory?.name}
               </p>
               <p>
                 <strong>Description:</strong>{" "}
