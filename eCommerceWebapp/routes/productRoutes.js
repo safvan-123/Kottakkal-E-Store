@@ -1,67 +1,66 @@
 import express from "express";
-import { isAdmin, requireSignIn } from '../middlewares/authMiddleware.js';
-import {  createProductController, deleteProductController, getProductByIdController, getProductController, getProductsByCategoryController, getSingleProductBySlugController,
-     productCountController, productFiltersController, productListController, productPhotoController,   searchProductController,
-     updateProductController,    } from "../controller/ProductController.js";
+import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import {
+  createProductController,
+  deleteProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  //     deleteProductController,
+  //   getProductByIdController,
+  //   getProductController,
+  getProductsByCategoryController,
+  //   getSingleProductBySlugController,
+  //   productCountController,
+  //   productFiltersController,
+  //   productListController,
+  //   productPhotoController,
+  //   searchProductController,
+  //    updateProductController,
+} from "../controller/ProductController.js";
 import formidable from "express-formidable";
 
-
-const router = express.Router()
-
-
+const router = express.Router();
 
 //routes
 // router.post('/create-product' , requireSignIn , isAdmin , formidable(), createProductController)
-router.post('/create-product',   createProductController)
+router.post("/", createProductController);
 
+router.get("/", getAllProducts);
+router.get("/:id", getProductById);
+router.put("/:id", updateProduct);
+router.delete("/:id", deleteProduct);
+router.get("/products-by-category/:cid", getProductsByCategoryController);
+// //routes get product
+// router.get("/get-product", getProductController);
 
+// //routes get single product
+// router.get("/get-product/:slug", getSingleProductBySlugController);
 
-//routes get product
-router.get('/get-product'  ,  getProductController)
+// //get photo
+// router.get("/product-photo/:pid", productPhotoController);
 
-//routes get single product
-router.get('/get-product/:slug' ,   getSingleProductBySlugController)
+// // Route to delete product
+// router.delete("/delete-product/:pid", deleteProductController);
 
-//get photo
-router.get('/product-photo/:pid' , productPhotoController)
+// // Update product route
 
-
-
-// Route to delete product
-router.delete('/delete-product/:pid', deleteProductController);
-
-
-
-
-// Update product route
-
-
-router.put("/update-product/:id", formidable(), updateProductController);
-
-
+// router.put("/update-product/:id", formidable(), updateProductController);
 
 //get product by category
 
-router.get('/products-by-category/:cid', getProductsByCategoryController);
+// //filter product
+// router.post("/product-filters", productFiltersController);
 
+// //product per page
+// router.get("/product-list/:page", productListController);
 
-//filter product
-router.post("/product-filters", productFiltersController);
+// //product count
+// router.get("/product-count", productCountController);
 
-//product per page
-router.get("/product-list/:page", productListController);
+// router.get("/search/:keyword", searchProductController);
 
-//product count
-router.get("/product-count", productCountController);
+// // Get single product by ID
+// router.get("/get-product-by-id/:pid", getProductByIdController);
 
-
-router.get("/search/:keyword", searchProductController);
-
-// Get single product by ID
-router.get('/get-product-by-id/:pid', getProductByIdController);
-
-
-
-
-
-export default router
+export default router;

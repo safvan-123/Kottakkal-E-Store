@@ -16,7 +16,9 @@ import contactRoutes from "./routes/contactRoutes.js";
 import pincodeRoutes from "./routes/pincodeRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import emailRoutes from "./routes/emailRoutes.js";
-import { sendWhatsappMessage } from "./whatsapp-reset-message/sendWhatsappMessage.js";
+// import { sendWhatsappMessage } from "./whatsapp-reset-message/sendWhatsappMessage.js";
+import masterCategoryRoutes from "./routes/masterCategoryRoutes.js";
+import subCategoryRoutes from "./routes/subCategoryRoutes.js";
 
 dotenv.config();
 
@@ -56,6 +58,8 @@ app.use("/api/contact", contactRoutes);
 app.use("/pincode", pincodeRoutes);
 app.use("/api/email", emailRoutes);
 app.use("/api/v1/address", addressRoutes);
+app.use("/api/master-categories", masterCategoryRoutes);
+app.use("/api/sub-categories", subCategoryRoutes);
 
 //rest api
 

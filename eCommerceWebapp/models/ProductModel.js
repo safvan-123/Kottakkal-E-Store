@@ -1,51 +1,35 @@
+// 📁 backend/models/Product.js
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
-    slug: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-    category: {
+    name: { type: String, required: true },
+    description: String,
+    price: Number,
+    discountPrice: Number,
+    stock: Number,
+    sku: { type: String, unique: true },
+    masterCategory: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "categories", // if your category model name is 'category'
+      ref: "MasterCategory",
       required: true,
     },
-
-    quantity: {
-      type: Number,
+    subCategory: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubCategory",
       required: true,
     },
+    imageUrl: String,
     imageUrl: {
       type: String,
+      required: false, // or true if mandatory
     },
-
-    price: {
-      type: Number,
-      default: 0,
-    },
-    shipping: {
-      type: Boolean,
-    },
-    colors: {
-      type: [String],
-      enum: ["red", "green", "white", "black", "blue"],
-      default: [],
-    },
-    sizes: {
-      type: [String],
-      enum: ["s", "m", "l", "xl", "xxl"],
-      default: [],
-    },
+    sizes: [String],
+    colors: [String],
+    tags: [String],
+    weight: Number,
+    slug: String,
+    status: { type: String, enum: ["Active", "Inactive"], default: "Active" },
   },
   { timestamps: true }
 );
