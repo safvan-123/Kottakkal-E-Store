@@ -5,24 +5,40 @@ const CategoryContext = createContext();
 
 export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
-
-  const fetchCategories = async () => {
+  const [subCategories, setSubCategories] = useState([]);
+  const fetchMasterCategories = async () => {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/Category/get-category`
+        `${import.meta.env.VITE_API_URL}/api/master-categories`
       );
-      setCategories(data.category || []);
+      setCategories(data.categories || []);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
 
+  // Fetch subcategories
+  const fetchSubCategories = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/sub-categories`
+      );
+
+      setSubCategories(data.subCategories || []);
+      console.log("Sub Categories:", data.subCategories);
+    } catch (error) {
+      console.error("Error fetching subcategories:", error);
+    }
+  };
+
   useEffect(() => {
-    fetchCategories();
+    fetchMasterCategories();
+    fetchSubCategories();
   }, []);
 
   return (
-    <CategoryContext.Provider value={{ categories }}>
+    <CategoryContext.Provider value={{ categories, subCategories }}>
       {children}
     </CategoryContext.Provider>
   );

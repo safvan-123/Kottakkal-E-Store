@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -34,6 +33,8 @@ const PrevArrow = (props) => {
 
 const Categories = () => {
   const { categories } = useCategory();
+  console.log(categories);
+
   console.log("Categories from Context in Categories.jsx:", categories);
 
   const navigate = useNavigate();
@@ -80,20 +81,11 @@ const Categories = () => {
     );
   }
 
-  const categoryImageUrls = [
-    "https://5.imimg.com/data5/SELLER/Default/2021/9/UL/KV/AT/8311874/winter-wear-1000x1000.png",
-    "https://www.popoptiq.com/wp-content/uploads/2019/01/4-25-1-870x646.jpg",
-    "https://mir-s3-cdn-cf.behance.net/projects/404/4f8032186976273.Y3JvcCw0NTk2LDM1OTUsMjYxLDA.png",
-    "https://th.bing.com/th/id/OIP.o_OkNsfokkO-CRwVxqz0iQHaE7?rs=1&pid=ImgDetMain",
-    "https://th.bing.com/th/id/OIP.lG_isUmIzlc-QzEGIzQ_HQHaHa?rs=1&pid=ImgDetMain",
-    "https://www.blufashion.com/wp-content/uploads/2023/12/Style-Accessories-Every-Man-Needs.jpg",
-    "https://st2.depositphotos.com/2289871/8526/i/450/depositphotos_85262756-stock-photo-two-happy-asian-children-sitting.jpg",
-  ];
-
   const handleCategoryClick = (categoryName) => {
-    navigate(`/shop?category=${encodeURIComponent(categoryName)}`);
+    navigate(`/subcategories/${categoryName}`);
+    // navigate(`/shop?category=${encodeURIComponent(categoryName)}`);
   };
-
+  // /api/sub-categories
   return (
     <section className="py-12 md:py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -120,8 +112,7 @@ const Categories = () => {
         <Slider {...settings}>
           {categories.map((category, index) => {
             const currentImageUrl =
-              categoryImageUrls[index % categoryImageUrls.length] ||
-              "/images/default-category.png";
+              category?.image || "/images/default-category.png";
 
             return (
               <div key={category._id} className="px-2">

@@ -13,7 +13,10 @@ import { Link } from "react-router-dom";
 
 const Hero = () => {
   const { offerProducts, loading, error } = useProducts();
-
+  console.log(offerProducts);
+  // Add a check to ensure it's an array before using
+  const offers = Array.isArray(offerProducts) ? offerProducts : [];
+  console.log(offers);
   const mainHeroCarouselSettings = {
     dots: true,
     infinite: true,
@@ -46,9 +49,6 @@ const Hero = () => {
     );
   }
 
-  // Add a check to ensure it's an array before using
-  const offers = Array.isArray(offerProducts) ? offerProducts : [];
-
   if (offers.length === 0) {
     return (
       <div className="flex justify-center items-center h-96 bg-gray-100">
@@ -76,6 +76,8 @@ const Hero = () => {
                 {offers.map((offer) => {
                   // Ensure 'product' exists within the offer object
                   const product = offer.product;
+                  console.log(product);
+
                   if (!product) {
                     console.warn(
                       "Offer object missing 'product' property:",
@@ -88,23 +90,24 @@ const Hero = () => {
                     product.price,
                     offer.offerPercentage
                   );
+
                   return (
                     <div key={offer._id}>
                       <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
                         <div className="relative z-10 text-center md:text-left flex-1">
                           {offer.offerPercentage > 0 && (
                             <span className="text-blue-600 text-3xl md:text-4xl lg:text-5xl font-extrabold block mb-2">
-                              {offer.offerPercentage}%{" "}
+                              {offer?.offerPercentage}%{" "}
                               <span className="text-gray-700 text-xl font-normal">
                                 Sale Off
                               </span>
                             </span>
                           )}
                           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
-                            {product.name}
+                            {product?.name}
                           </h2>
                           <p className="text-gray-600 text-sm md:text-base mb-6 max-w-md mx-auto md:mx-0">
-                            {product.description}
+                            {product?.description}
                           </p>
                           <Link to={`/product/${product._id}`}>
                             <a
@@ -118,11 +121,11 @@ const Hero = () => {
                         <div className="relative z-10 w-full md:w-1/2 lg:w-2/5 flex justify-center items-center p-4">
                           <img
                             src={
-                              product.imageUrl ||
-                              product.images?.[0]?.url ||
+                              product?.imageUrl ||
+                              product?.images?.[0]?.url ||
                               "/images/default.png"
                             }
-                            alt={product.name}
+                            alt={product?.name}
                             className="max-w-full h-auto object-contain drop-shadow-2xl"
                             style={{ maxHeight: "300px" }}
                           />

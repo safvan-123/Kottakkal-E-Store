@@ -33,7 +33,7 @@ export const ProductProvider = ({ children }) => {
 
       // Fetch All Products
       const allProductsResponse = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/v1/product/get-product`
+        `${import.meta.env.VITE_API_URL}/api/v1/product`
       );
 
       if (

@@ -6,8 +6,8 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ShopPage = () => {
-  console.log(import.meta.env.VITE_API_URL);
-  const { categories: apiCategories } = useCategory();
+  const { subCategories } = useCategory();
+
   const [allProducts, setAllProducts] = useState([]);
   const [loadingInitial, setLoadingInitial] = useState(false);
   const [errorInitial, setErrorInitial] = useState(null);
@@ -39,7 +39,7 @@ const ShopPage = () => {
       setErrorInitial(null);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/v1/product/get-product`
+          `${import.meta.env.VITE_API_URL}/api/v1/product`
         );
         setAllProducts(response.data.products);
       } catch (err) {
@@ -71,9 +71,9 @@ const ShopPage = () => {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const categoryFromUrl = params.get("category");
-    if (categoryFromUrl && apiCategories.length > 0) {
-      const matchedCategory = apiCategories.find(
+    const categoryFromUrl = params.get("subCategory");
+    if (categoryFromUrl && subCategories.length > 0) {
+      const matchedCategory = subCategories.find(
         (cat) => cat.name === categoryFromUrl
       );
       if (matchedCategory) {
@@ -85,15 +85,15 @@ const ShopPage = () => {
         });
       }
     }
-  }, [location.search, apiCategories]);
+  }, [location.search, subCategories]);
 
   // Helper to get category count for filters
-  const filterCategories = apiCategories.map((cat) => ({
+  const filterCategories = subCategories.map((cat) => ({
     ...cat,
     count: allProducts.filter((p) => {
       const categoryId =
-        typeof p.category === "object" ? p.category._id : p.category;
-      const matchingApiCategory = apiCategories.find(
+        typeof p.subCategory === "object" ? p.subCategory?._id : p.subCategory;
+      const matchingApiCategory = subCategories.find(
         (apiCat) => apiCat._id === categoryId
       );
       return matchingApiCategory && matchingApiCategory.name === cat.name;
@@ -107,13 +107,15 @@ const ShopPage = () => {
     let filtered = [...allProducts];
 
     if (selectedCategories.length > 0) {
-      const selectedCategoryIds = apiCategories
+      const selectedCategoryIds = subCategories
         .filter((cat) => selectedCategories.includes(cat.name))
         .map((cat) => cat._id);
 
       filtered = filtered.filter((p) => {
         const categoryId =
-          typeof p.category === "object" ? p.category._id : p.category;
+          typeof p.subCategory === "object"
+            ? p.subCategory?._id
+            : p.subCategory;
         return selectedCategoryIds.includes(categoryId);
       });
     }
@@ -158,7 +160,7 @@ const ShopPage = () => {
     selectedColors,
     priceRange,
     sortOption,
-    apiCategories,
+    subCategories,
   ]);
 
   useEffect(() => {
@@ -174,6 +176,7 @@ const ShopPage = () => {
     sortOption,
     applyFilters,
   ]);
+  console.log(displayedProducts);
 
   // Pagination helpers
   const totalPages = Math.ceil(displayedProducts.length / PRODUCTS_PER_PAGE);
