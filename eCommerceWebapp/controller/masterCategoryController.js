@@ -1,6 +1,8 @@
 import { MasterCategory } from "../models/masterCategory.js";
 
 export const addMasterCategory = async (req, res) => {
+  console.log(req.body);
+
   try {
     const { name, image } = req.body;
 
