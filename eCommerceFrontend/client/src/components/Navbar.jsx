@@ -40,7 +40,7 @@ export default function Navbar() {
     setSelectedCategory(categoryName);
     navigate(
       categoryName
-        ? `/shop?category=${encodeURIComponent(categoryName)}`
+        ? `/subcategories/${encodeURIComponent(categoryName)}`
         : "/shop"
     );
 
