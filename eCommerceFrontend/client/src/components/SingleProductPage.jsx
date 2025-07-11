@@ -21,6 +21,7 @@ const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api/v1/product`;
 
 const SingleProductPage = () => {
   const { productId } = useParams();
+
   const navigate = useNavigate();
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
@@ -42,10 +43,9 @@ const SingleProductPage = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(
-          `${API_BASE_URL}/get-product-by-id/${productId}`
-        );
-        const fetchedProduct = response.data.product;
+        const response = await axios.get(`${API_BASE_URL}/${productId}`);
+
+        const fetchedProduct = response.data;
         setProduct(fetchedProduct);
 
         if (fetchedProduct.images && fetchedProduct.images.length > 0) {
@@ -76,6 +76,7 @@ const SingleProductPage = () => {
     };
 
     fetchProduct();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [productId]);
 
   // Helper to determine text color for contrast on colored buttons
