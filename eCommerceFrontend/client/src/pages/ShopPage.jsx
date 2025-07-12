@@ -3,6 +3,8 @@ import ProductCard from "../components/homepage/needs/ProductCard";
 import { useCategory } from "../context/CategoryContext";
 import { FaThLarge, FaList, FaFilter, FaTimes } from "react-icons/fa";
 import axios from "axios";
+import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const ShopPage = () => {
@@ -67,6 +69,7 @@ const ShopPage = () => {
       setAvailableSizes(Array.from(sizes).sort());
       setAvailableColors(Array.from(colors).sort());
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [allProducts]);
 
   useEffect(() => {
@@ -531,25 +534,53 @@ const ShopPage = () => {
 
   return (
     <>
-      <section className="bg-white py-8 border-b border-gray-200">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">
+      <motion.section
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-gradient-to-r from-white via-gray-50 to-white py-6 sm:py-8 border-b border-gray-200 shadow-sm"
+      >
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Heading with animated underline */}
+          <motion.h1
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 relative inline-block"
+          >
             Explore All Products
-          </h1>
-          <nav className="text-gray-600 text-sm">
-            <a href="/" className="hover:text-blue-600">
-              Home
-            </a>{" "}
-            /{" "}
-            <a href="/shop" className="hover:text-blue-600">
-              Shop
-            </a>{" "}
-            / <span className="text-blue-600">Shop With Sidebar</span>
-          </nav>
-        </div>
-      </section>
+            <span className="absolute left-0 bottom-0 w-full h-1 bg-blue-500 rounded-md scale-x-0 origin-left animate-underline" />
+          </motion.h1>
 
-      <section className="py-12 md:py-16 bg-gray-50 min-h-screen">
+          {/* Breadcrumbs */}
+          <motion.nav
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-sm sm:text-base text-gray-600 flex flex-wrap items-center gap-2"
+          >
+            <Link
+              to="/"
+              className="hover:text-blue-600 transition-colors font-medium"
+            >
+              Home
+            </Link>
+            <span className="text-gray-400">/</span>
+            <Link
+              to="/shop"
+              className="hover:text-blue-600 transition-colors font-medium"
+            >
+              Shop
+            </Link>
+            <span className="text-gray-400">/</span>
+            <span className="text-blue-600 font-semibold">
+              Shop With Sidebar
+            </span>
+          </motion.nav>
+        </div>
+      </motion.section>
+
+      <section className="py-6 md:py-16 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8 relative">
           <FilterSidebar />
 
@@ -562,7 +593,6 @@ const ShopPage = () => {
 
           <div className="w-full lg:w-3/4">
             <div className="bg-white rounded-lg shadow-md p-4 mb-6 flex justify-between items-center">
-              {/* Filter button for mobile */}
               <button
                 onClick={() => setShowMobileFilters(true)}
                 className="lg:hidden p-2 rounded-md bg-blue-600 text-white flex items-center gap-2"
@@ -634,7 +664,7 @@ const ShopPage = () => {
                 <div
                   className={`${
                     gridView
-                      ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                      ? "grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6"
                       : "flex flex-col gap-4"
                   }`}
                 >

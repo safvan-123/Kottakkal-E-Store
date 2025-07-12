@@ -269,13 +269,46 @@ const ProductCard = ({ product, isListView = false }) => {
   return (
     <>
       {/* Product Card Container */}
+      {/* <div
+        className={`group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden
+    ${
+      isListView
+        ? "flex flex-col md:flex-row items-stretch p-4 gap-4"
+        : "flex flex-col p-3 sm:p-1 gap-3 sm:gap-2"
+    }`}
+      >
+        <Link
+          to={`/product/${product._id}`}
+          className={`${
+            isListView ? "w-full md:w-1/3 flex-shrink-0" : "block"
+          }`}
+        >
+          <div
+            className={`${
+              isListView ? "w-full h-44 md:h-32" : "h-40 sm:h-48"
+            } mb-3 sm:mb-4 flex items-center justify-center relative`}
+          >
+            <img
+              src={imageUrl}
+              alt={product.name || "Product image"}
+              className="max-w-full max-h-full object-contain"
+              loading="lazy"
+              draggable={false}
+            />
+            {currentOffer && (
+              <span className="absolute top-0 left-0 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded-br-lg rounded-tl-lg shadow-md">
+                {currentOffer.offerPercentage}% OFF
+              </span>
+            )}
+          </div>
+        </Link> */}
       <div
         className={`group relative bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden
-                            ${
-                              isListView
-                                ? "flex flex-col md:flex-row items-stretch p-4 gap-4"
-                                : "flex flex-col p-4"
-                            }`}
+    ${
+      isListView
+        ? "flex flex-col md:flex-row items-stretch p-2 md:p-4 gap-2 md:gap-4"
+        : "flex flex-col p-1 sm:p-3 gap-1 sm:gap-3"
+    }`}
       >
         {/* Product Image and Offer Badge */}
         <Link
@@ -286,17 +319,13 @@ const ProductCard = ({ product, isListView = false }) => {
         >
           <div
             className={`${
-              isListView ? "w-full h-48 md:h-32" : "h-48"
-            } mb-4 flex items-center justify-center relative`}
+              isListView ? "w-full h-36 md:h-32" : "h-24 sm:h-40"
+            } mb-1 sm:mb-4 flex items-center justify-center relative`}
           >
             <img
               src={imageUrl}
               alt={product.name || "Product image"}
-              className={`${
-                isListView
-                  ? "max-w-full max-h-full object-contain"
-                  : "max-w-full max-h-full object-contain"
-              }`}
+              className="max-w-full max-h-full object-contain"
               loading="lazy"
               draggable={false}
             />
@@ -316,22 +345,23 @@ const ProductCard = ({ product, isListView = false }) => {
               : "w-full text-center"
           }`}
         >
-          {/* Link to product detail page */}
           <Link to={`/product/${product._id}`}>
             <h3
               className={`font-semibold text-gray-800 hover:text-blue-700 transition-colors ${
-                isListView ? "text-lg mb-1" : "text-xl mb-2 line-clamp-2"
+                isListView
+                  ? "text-base sm:text-lg mb-1"
+                  : "text-sm sm:text-xl mb-1 sm:mb-2 line-clamp-2"
               }`}
             >
               {product.name}
             </h3>
           </Link>
 
-          {/* Rating Stars */}
+          {/* Rating */}
           <div
             className={`flex items-center ${
               isListView ? "justify-start" : "justify-center"
-            } mb-2`}
+            } mb-1`}
           >
             {[...Array(fullStars)].map((_, i) => (
               <FaStar key={`full-${i}`} className="text-sm text-yellow-400" />
@@ -347,41 +377,41 @@ const ProductCard = ({ product, isListView = false }) => {
             </span>
           </div>
 
-          {/* Price Display */}
+          {/* Price */}
           <div
             className={`flex items-baseline ${
               isListView ? "justify-start" : "justify-center"
-            } gap-2 mb-3`}
+            } gap-2 mb-2`}
           >
-            <span className="text-blue-600 font-bold text-xl">
+            <span className="text-blue-600 font-bold text-base sm:text-xl">
               {formatPrice(displayPrice)}
             </span>
             {currentOffer && product.price > displayPrice && (
-              <span className="text-gray-500 line-through text-sm">
+              <span className="text-gray-500 line-through text-xs sm:text-sm">
                 {formatPrice(product.price)}
               </span>
             )}
           </div>
 
-          {/* Description (only for list view) */}
+          {/* Description */}
           {isListView && (
-            <p className="text-gray-600 text-sm mt-2 line-clamp-3 mb-3">
+            <p className="text-gray-600 text-sm mt-1 line-clamp-3 mb-2">
               {product.description || "No description available."}
             </p>
           )}
 
-          {/* Interactive Color Selector on Card */}
-          {product.colors && product.colors.length > 0 && (
+          {/* Color Selector */}
+          {product.colors?.length > 0 && (
             <div
-              className={`mt-2 ${
+              className={`mt-1 ${
                 isListView ? "text-left" : "text-center"
-              } mb-3`}
+              } mb-2`}
             >
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 Color:
               </label>
               <div
-                className={`flex flex-wrap gap-2 ${
+                className={`flex flex-wrap gap-1 ${
                   isListView ? "justify-start" : "justify-center"
                 }`}
               >
@@ -393,13 +423,12 @@ const ProductCard = ({ product, isListView = false }) => {
                       e.stopPropagation();
                       setSelectedCardColor(color);
                     }}
-                    className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-200
-                                                    ${
-                                                      selectedCardColor ===
-                                                      color
-                                                        ? "border-blue-600 ring-2 ring-blue-300"
-                                                        : "border-gray-300 hover:border-blue-400"
-                                                    }`}
+                    className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200
+                ${
+                  selectedCardColor === color
+                    ? "border-blue-600 ring-2 ring-blue-300"
+                    : "border-gray-300 hover:border-blue-400"
+                }`}
                     style={{ backgroundColor: color }}
                     title={color}
                   >
@@ -407,9 +436,9 @@ const ProductCard = ({ product, isListView = false }) => {
                       <span
                         className={`${
                           isLightColor(color) ? "text-gray-800" : "text-white"
-                        } text-xs font-bold`}
+                        } text-[10px] font-bold`}
                       >
-                        &#10003;
+                        ✓
                       </span>
                     )}
                   </button>
@@ -418,18 +447,18 @@ const ProductCard = ({ product, isListView = false }) => {
             </div>
           )}
 
-          {/* Interactive Size Selector on Card */}
-          {product.sizes && product.sizes.length > 0 && (
+          {/* Size Selector */}
+          {product.sizes?.length > 0 && (
             <div
-              className={`mt-2 ${
+              className={`mt-1 ${
                 isListView ? "text-left" : "text-center"
-              } mb-4`}
+              } mb-3`}
             >
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-gray-700 mb-1">
                 Size:
               </label>
               <div
-                className={`flex flex-wrap gap-2 ${
+                className={`flex flex-wrap gap-1 ${
                   isListView ? "justify-start" : "justify-center"
                 }`}
               >
@@ -441,12 +470,12 @@ const ProductCard = ({ product, isListView = false }) => {
                       e.stopPropagation();
                       setSelectedCardSize(size);
                     }}
-                    className={`px-3 py-1 rounded-md border-2 text-xs font-medium transition-all duration-200
-                                                    ${
-                                                      selectedCardSize === size
-                                                        ? "bg-blue-600 text-white border-blue-600"
-                                                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                                                    }`}
+                    className={`px-2 py-1 rounded-md border-2 text-[11px] font-medium transition-all duration-200
+                ${
+                  selectedCardSize === size
+                    ? "bg-blue-600 text-white border-blue-600"
+                    : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                }`}
                   >
                     {size.toUpperCase()}
                   </button>
@@ -455,9 +484,10 @@ const ProductCard = ({ product, isListView = false }) => {
             </div>
           )}
 
+          {/* Add to Cart Button */}
           <button
             onClick={handleAddToCartFromCard}
-            className="w-full bg-blue-600 text-white px-4 py-2.5 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 text-base font-semibold flex items-center justify-center"
+            className="w-full bg-blue-600 text-white px-3 py-2 sm:py-2.5 rounded-lg shadow-md hover:bg-blue-700 transition-colors duration-200 text-sm sm:text-base font-semibold flex items-center justify-center"
             aria-label="Add to cart"
             title="Add to Cart"
           >
@@ -465,25 +495,23 @@ const ProductCard = ({ product, isListView = false }) => {
           </button>
         </div>
 
-        {/* Top-Right Action Buttons (Wishlist, Quick View) */}
-
+        {/* Action Buttons (Wishlist + Quick View) */}
         <div
           className={`absolute top-4 right-4 z-20 flex flex-col space-y-2 transition-opacity duration-300
-                                 ${
-                                   isListView
-                                     ? "relative top-auto right-auto mt-4 md:mt-0"
-                                     : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
-                                 }`}
+      ${
+        isListView
+          ? "relative top-auto right-auto mt-4 md:mt-0"
+          : "opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
+      }`}
         >
-          {/* Wishlist Button */}
           <button
             onClick={handleWishlistClick}
             className={`p-2 rounded-full shadow-md transition-all duration-200
-                                    ${
-                                      isInWishlist(product._id)
-                                        ? "bg-red-500 text-white"
-                                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                                    }`}
+        ${
+          isInWishlist(product._id)
+            ? "bg-red-500 text-white"
+            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        }`}
             aria-label={
               isInWishlist(product._id)
                 ? "Remove from Wishlist"
@@ -502,7 +530,6 @@ const ProductCard = ({ product, isListView = false }) => {
             )}
           </button>
 
-          {/* Quick View Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -569,7 +596,7 @@ const ProductCard = ({ product, isListView = false }) => {
             <img
               src={imageUrl}
               alt={product.name || "Product image"}
-              className="mb-4 max-h-48 sm:max-h-64 mx-auto object-contain w-full rounded-lg border border-gray-200 shadow-sm"
+              className="mb-4 max-h-32 sm:h-32 md:h-40  mx-auto object-contain w-full rounded-lg border border-gray-200 shadow-sm"
             />
             {/* Product Description in Modal */}
             <p className="mb-5 text-gray-700 leading-relaxed text-sm sm:text-base">
