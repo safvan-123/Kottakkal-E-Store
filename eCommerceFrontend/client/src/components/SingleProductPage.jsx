@@ -488,33 +488,8 @@ const SingleProductPage = () => {
           className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 bg-white rounded-xl shadow-lg overflow-hidden"
         >
           {/* Left: Image Section */}
-          {/* <div className="p-3 sm:p-5 bg-gray-50 flex flex-col items-center justify-center">
-            <img
-              src={mainImage}
-              alt={product.name}
-              className="w-full max-h-[240px] sm:max-h-[400px] object-contain border-4 border-transparent rounded-xl bg-clip-padding bg-gradient-to-r from-blue-400 to-purple-500 hover:scale-105 transition-transform duration-300"
-            />
-            {product.images?.length > 0 && (
-              <div className="flex overflow-x-auto gap-2 mt-3 sm:mt-4 px-1 sm:px-0">
-                {product.images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img.url}
-                    alt={`Thumb ${index + 1}`}
-                    onClick={() => setMainImage(img.url)}
-                    className={`w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-md border-2 cursor-pointer transition-all duration-200 shrink-0
-                  ${
-                    mainImage === img.url
-                      ? "border-blue-600 ring-2 ring-blue-300"
-                      : "border-gray-200 hover:border-blue-400 opacity-90"
-                  }`}
-                  />
-                ))}
-              </div>
-            )}
-          </div> */}
+
           <div className="p-3 sm:p-5 bg-gray-50 flex flex-col items-center justify-center">
-            {/* Main Image */}
             <div className="w-full max-w-[500px] sm:max-w-full">
               <img
                 src={mainImage}
@@ -523,7 +498,6 @@ const SingleProductPage = () => {
               />
             </div>
 
-            {/* Thumbnails */}
             {product.images?.length > 0 && (
               <div className="flex overflow-x-auto gap-2 mt-3 sm:mt-4 px-1 sm:px-0">
                 {product.images.map((img, index) => (
