@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -22,6 +22,9 @@ const CartPage = () => {
   } = useCart();
 
   const navigate = useNavigate();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const formatPrice = (price) =>
     new Intl.NumberFormat("en-IN", {
@@ -101,11 +104,11 @@ const CartPage = () => {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3 }}
-                  className="bg-white border border-gray-200 shadow rounded-xl p-3 flex flex-col gap-3 hover:shadow-md transition"
+                  className="bg-white border border-gray-200 shadow rounded-xl p-2 sm:p-3 flex flex-col gap-2 hover:shadow-md transition"
                 >
                   <Link
                     to={`/product/${product._id}`}
-                    className="w-full h-28 sm:h-36 rounded-lg overflow-hidden"
+                    className="w-full h-24 sm:h-40 rounded-lg overflow-hidden"
                   >
                     <img
                       src={product.imageUrl || "/images/default-product.png"}
@@ -122,7 +125,9 @@ const CartPage = () => {
                       >
                         {product.name}
                       </Link>
-                      <p className="text-gray-500 mt-0.5">Size: {size}</p>
+                      <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                        Size: {size}
+                      </p>
 
                       {color && color !== "Default Color" && (
                         <p className="text-gray-500 mt-0.5 flex items-center">
@@ -157,7 +162,7 @@ const CartPage = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-3">
+                    <div className="flex flex-wrap items-center justify-between mt-3 gap-2">
                       <div className="flex items-center gap-2 bg-gray-100 px-2 py-1 rounded-md">
                         <button
                           onClick={() =>
@@ -176,15 +181,18 @@ const CartPage = () => {
                         </button>
                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-700 text-sm">
+                      {/* Price and Trash icon on opposite ends */}
+                      <div className="flex items-center justify-between w-full mt-2">
+                        <span className="font-semibold text-gray-800 text-sm">
                           {formatPrice(subTotal)}
                         </span>
-                        <div className="p-1 rounded-md hover:bg-red-100 transition">
-                          <button onClick={() => removeFromCart(_id)}>
-                            <FaTrash className="text-red-500 hover:text-red-700 transition" />
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => removeFromCart(_id)}
+                          className="p-1 rounded-md hover:bg-red-100 transition text-red-600"
+                          title="Remove"
+                        >
+                          <FaTrash className="text-base sm:text-lg" />
+                        </button>
                       </div>
                     </div>
                   </div>

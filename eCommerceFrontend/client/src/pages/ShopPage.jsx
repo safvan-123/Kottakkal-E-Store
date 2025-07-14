@@ -12,7 +12,7 @@ import {
   FaFire,
 } from "react-icons/fa";
 import axios from "axios";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -44,7 +44,7 @@ const ShopPage = () => {
 
   const [availableSizes, setAvailableSizes] = useState([]);
   const [availableColors, setAvailableColors] = useState([]);
-
+  const [showBanner, setShowBanner] = useState(true);
   useEffect(() => {
     const fetchProducts = async () => {
       setLoadingInitial(true);
@@ -82,6 +82,13 @@ const ShopPage = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [allProducts]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowBanner(false);
+    }, 6000); // 4 seconds
+
+    return () => clearTimeout(timer); // Cleanup
+  }, []);
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const categoryFromUrl = params.get("subCategory");
@@ -545,90 +552,133 @@ const ShopPage = () => {
   return (
     <>
       <motion.section
-        initial={{ opacity: 0, y: -60 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, ease: "easeOut" }}
-        className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-cover bg-center rounded-2xl shadow-2xl mb-10 overflow-hidden border-b border-blue-200"
-        style={{
-          backgroundImage:
-            "url('https://images.unsplash.com/photo-1585386959984-a4155224a1a1?auto=format&fit=crop&w=1400&q=80')",
-        }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="bg-gradient-to-r from-white via-gray-50 to-white py-6 sm:py-8 border-b border-gray-200 shadow-sm"
       >
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-purple-800/70 to-pink-700/70 backdrop-blur-sm"></div>
-
-        {/* Floating Glows */}
-        <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
-        <div className="pointer-events-none absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-300 opacity-20 rounded-full filter blur-2xl animate-ping"></div>
-
-        {/* Floating Icons */}
-        <motion.div
-          className="pointer-events-none absolute top-4 left-4 text-white/30 text-3xl"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3, repeat: Infinity }}
-        >
-          <FaGift />
-        </motion.div>
-        <motion.div
-          className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-2xl"
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        >
-          <FaTags />
-        </motion.div>
-        <motion.div
-          className="pointer-events-none absolute top-6 right-6 text-white/30 text-3xl"
-          animate={{ y: [0, -12, 0] }}
-          transition={{ duration: 5, repeat: Infinity }}
-        >
-          <FaBolt />
-        </motion.div>
-
-        {/* Content */}
-        <div className="relative z-10 max-w-4xl mx-auto text-white">
-          {/* Title */}
+        <div className="container mx-auto px-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {/* Heading with animated underline */}
           <motion.h1
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-            className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md mb-2"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-900 relative inline-block"
           >
-            <span className="bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
-              മലപ്പുറത്തിന്റെ വിശ്വസ്ത ഷോപ്പിംഗ് സേവനം!
-            </span>
-            {"  "}🛍️
+            Explore All Products
+            <span className="absolute left-0 bottom-0 w-full h-1 bg-blue-500 rounded-md scale-x-0 origin-left animate-underline" />
           </motion.h1>
 
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.8 }}
-            className="text-sm sm:text-base md:text-xl font-medium text-blue-100"
+          {/* Breadcrumbs */}
+          <motion.nav
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            className="text-sm sm:text-base text-gray-600 flex flex-wrap items-center gap-2"
           >
-            നിങ്ങൾക്കാവശ്യമായ സാധനങ്ങൾ എല്ലാം ഇനി നിങ്ങളെ തേടിയെത്തും! 🛍️ 🚚{" "}
-            <br />
-            ഇനി വാങ്ങാം വീട്ടിലിരുന്ന്! 🪑📦
-          </motion.p>
-
-          {/* CTA Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.7 }}
-            className="mt-6 flex flex-col items-center gap-2"
-          >
-            <a
-              href="#shop-now"
-              className="inline-block bg-white text-pink-600 font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-pink-100 transition-all duration-300 text-sm sm:text-base"
+            <Link
+              to="/"
+              className="hover:text-blue-600 transition-colors font-medium"
             >
-              ഇപ്പോൾ ഓർഡർ ചെയ്യൂ
-            </a>
-            <span className="text-lg sm:text-xl animate-bounce">👇</span>
-          </motion.div>
+              Home
+            </Link>
+            <span className="text-gray-400">/</span>
+            <Link
+              to="/shop"
+              className="hover:text-blue-600 transition-colors font-medium"
+            >
+              Shop
+            </Link>
+            <span className="text-gray-400">/</span>
+            <span className="text-blue-600 font-semibold">
+              Shop With Sidebar
+            </span>
+          </motion.nav>
         </div>
       </motion.section>
+      <AnimatePresence mode="wait">
+        {showBanner && (
+          <motion.section
+            key="promo"
+            initial={{ opacity: 0, y: -60 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -60 }}
+            transition={{ duration: 1, ease: "easeInOut" }}
+            className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden border-b border-blue-200"
+          >
+            {/* Floating Glows */}
+            <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
+            <div className="pointer-events-none absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-300 opacity-20 rounded-full filter blur-2xl animate-ping"></div>
 
+            {/* Floating Icons */}
+            <motion.div
+              className="pointer-events-none absolute top-4 left-4 text-white/30 text-3xl"
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+            >
+              <FaGift />
+            </motion.div>
+            <motion.div
+              className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-2xl"
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 4, repeat: Infinity }}
+            >
+              <FaTags />
+            </motion.div>
+            <motion.div
+              className="pointer-events-none absolute top-6 right-6 text-white/30 text-3xl"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 5, repeat: Infinity }}
+            >
+              <FaBolt />
+            </motion.div>
+
+            {/* Content */}
+            <div className="relative z-10 max-w-4xl mx-auto text-white mt-6">
+              {/* Title */}
+              <motion.h1
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
+                className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md mb-2"
+              >
+                <span className="bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
+                  മലപ്പുറത്തിന്റെ വിശ്വസ്ത ഷോപ്പിംഗ് സേവനം!
+                </span>{" "}
+                🛍️
+              </motion.h1>
+
+              {/* Subtitle */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.8 }}
+                className="text-sm sm:text-base md:text-xl font-medium text-blue-100"
+              >
+                നിങ്ങൾക്കാവശ്യമായ സാധനങ്ങൾ എല്ലാം ഇനി നിങ്ങളെ തേടിയെത്തും! 🛍️ 🚚{" "}
+                <br />
+                ഇനി വാങ്ങാം വീട്ടിലിരുന്ന്! 🪑📦
+              </motion.p>
+
+              {/* CTA Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1, duration: 0.7 }}
+                className="mt-6 flex flex-col items-center gap-2"
+              >
+                <a
+                  href="#shop-now"
+                  className="inline-block bg-white text-pink-600 font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-pink-100 transition-all duration-300 text-sm sm:text-base"
+                >
+                  ഇപ്പോൾ ഓർഡർ ചെയ്യൂ
+                </a>
+                <span className="text-lg sm:text-xl animate-bounce">👇</span>
+              </motion.div>
+            </div>
+          </motion.section>
+        )}
+      </AnimatePresence>
       <section className="py-6 md:py-16 bg-gray-50 min-h-screen">
         <div className="container mx-auto px-4 flex flex-col lg:flex-row gap-8 relative">
           <FilterSidebar />
