@@ -78,7 +78,7 @@ const OfferSalesPage = () => {
       {/* Hero Section */}
 
       <motion.section
-        className="relative text-center py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden"
+        className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden"
         initial={{ opacity: 0, y: -60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
@@ -113,10 +113,10 @@ const OfferSalesPage = () => {
         </motion.div>
 
         <h1 className="text-2xl sm:text-4xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text drop-shadow-lg">
-          <div className="flex items-center justify-center gap-1 me-4 sm:me-0">
-            <FaGift className="text-yellow-300 drop-shadow-lg text-2xl sm:text-4xl" />
-            <FaFire className="text-pink-400 drop-shadow-lg text-2xl sm:text-4xl" />
-            <span className="text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
+            <FaGift className="text-yellow-300 drop-shadow-lg text-3xl sm:text-4xl" />
+            <FaFire className="text-pink-400 drop-shadow-lg text-3xl sm:text-4xl" />
+            <span className="w-full sm:w-auto text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
               ഇന്നത്തെ മികച്ച ഓഫറുകൾ
             </span>
           </div>

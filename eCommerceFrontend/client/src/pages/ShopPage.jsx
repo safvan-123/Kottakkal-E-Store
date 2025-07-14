@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ProductCard from "../components/homepage/needs/ProductCard";
 import { useCategory } from "../context/CategoryContext";
-import { FaThLarge, FaList, FaFilter, FaTimes } from "react-icons/fa";
+import {
+  FaThLarge,
+  FaList,
+  FaFilter,
+  FaTimes,
+  FaGift,
+  FaTags,
+  FaBolt,
+  FaFire,
+} from "react-icons/fa";
 import axios from "axios";
 import { motion } from "framer-motion";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
@@ -536,10 +545,10 @@ const ShopPage = () => {
   return (
     <>
       <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-        className="relative py-4 sm:py-0 sm:py-16 md:py-20 border-b border-blue-200 shadow-lg bg-cover bg-center"
+        initial={{ opacity: 0, y: -60 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, ease: "easeOut" }}
+        className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-cover bg-center rounded-2xl shadow-2xl mb-10 overflow-hidden border-b border-blue-200"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1585386959984-a4155224a1a1?auto=format&fit=crop&w=1400&q=80')",
@@ -548,16 +557,46 @@ const ShopPage = () => {
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 via-purple-800/70 to-pink-700/70 backdrop-blur-sm"></div>
 
+        {/* Floating Glows */}
+        <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
+        <div className="pointer-events-none absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-300 opacity-20 rounded-full filter blur-2xl animate-ping"></div>
+
+        {/* Floating Icons */}
+        <motion.div
+          className="pointer-events-none absolute top-4 left-4 text-white/30 text-3xl"
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 3, repeat: Infinity }}
+        >
+          <FaGift />
+        </motion.div>
+        <motion.div
+          className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-2xl"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 4, repeat: Infinity }}
+        >
+          <FaTags />
+        </motion.div>
+        <motion.div
+          className="pointer-events-none absolute top-6 right-6 text-white/30 text-3xl"
+          animate={{ y: [0, -12, 0] }}
+          transition={{ duration: 5, repeat: Infinity }}
+        >
+          <FaBolt />
+        </motion.div>
+
         {/* Content */}
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center text-white">
+        <div className="relative z-10 max-w-4xl mx-auto text-white">
           {/* Title */}
           <motion.h1
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-            className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md"
+            className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md mb-2"
           >
-            മലപ്പുറത്തിന്റെ വിശ്വസ്ത ഷോപ്പിംഗ് സേവനം! 🛍️
+            <span className="bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
+              മലപ്പുറത്തിന്റെ വിശ്വസ്ത ഷോപ്പിംഗ് സേവനം!
+            </span>
+            {"  "}🛍️
           </motion.h1>
 
           {/* Subtitle */}
@@ -565,11 +604,10 @@ const ShopPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.8 }}
-            className="mt-3 sm:mt-4 text-sm sm:text-base md:text-xl font-medium text-blue-100"
+            className="text-sm sm:text-base md:text-xl font-medium text-blue-100"
           >
-            നിങ്ങൾക്കാവശ്യമായ സാധനങ്ങൾ എല്ലാം ഇനി നിങ്ങളെ തേടിയെത്തും! 🛍️ 🚚
+            നിങ്ങൾക്കാവശ്യമായ സാധനങ്ങൾ എല്ലാം ഇനി നിങ്ങളെ തേടിയെത്തും! 🛍️ 🚚{" "}
             <br />
-            {/* അങ്ങാടി ഇനി പൊരീക്കെത്തും 🏡🤗 */}
             ഇനി വാങ്ങാം വീട്ടിലിരുന്ന്! 🪑📦
           </motion.p>
 
@@ -582,7 +620,7 @@ const ShopPage = () => {
           >
             <a
               href="#shop-now"
-              className="inline-block bg-white text-blue-700 font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-blue-50 transition-all duration-300 text-sm sm:text-base"
+              className="inline-block bg-white text-pink-600 font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-pink-100 transition-all duration-300 text-sm sm:text-base"
             >
               ഇപ്പോൾ ഓർഡർ ചെയ്യൂ
             </a>
