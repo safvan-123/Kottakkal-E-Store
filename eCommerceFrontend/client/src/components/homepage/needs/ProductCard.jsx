@@ -6,6 +6,7 @@ import {
   FaTimes,
   FaShoppingCart,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
 import { FaHeart as FarHeart } from "react-icons/fa";
 import { FaHeart as FasHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -16,7 +17,7 @@ import { toast } from "react-toastify";
 
 const ProductCard = ({ product, isListView = false }) => {
   // If product data is not available, don't render anything
-  if (!product) return null;
+  // if (!product) return null;
 
   // Destructure context functions
   const { offerProducts } = useProducts();

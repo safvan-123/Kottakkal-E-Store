@@ -8,6 +8,7 @@ import React, {
 import axios from "axios";
 import { AuthContext } from "./AuthContext";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 // import { useLocation } from "react-router-dom";
 
 export const CartContext = createContext();
@@ -117,12 +118,65 @@ export const CartProvider = ({ children }) => {
         setCartItems(data.items);
         setCartTotal(data.total);
 
-        // ✅ Only show success toast if the item was NOT already in cart
         if (!itemAlreadyInCart) {
-          toast.success(`${product.name} added to cart!`);
+          toast.success(
+            <div className="flex items-start space-x-3">
+              <img
+                src={product.imageUrl || "/images/default-product.png"}
+                alt={product.name}
+                className="w-12 h-12 object-cover rounded"
+              />
+              <div>
+                <p className="text-sm font-semibold text-green-600">
+                  ✅ {product.name}
+                </p>
+                <p className="text-xs text-gray-600">
+                  Successfully added to your cart!
+                </p>
+              </div>
+            </div>,
+            {
+              autoClose: 3000, // 3 seconds
+              position: "top-right",
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              hideProgressBar: false,
+              icon: false,
+            }
+          );
         } else if (itemAlreadyInCart) {
+          // toast.info(
+          //   `🛍️ ${product.name} is Already in Your cart! If you need more, change the quantity from the cart page.`,
+          //   {
+          //     autoClose: 4000, // 4 seconds
+          //   }
+          // );
           toast.info(
-            `🛍️ ${product.name} is already in your cart! If you need more, change the quantity from the cart page.`
+            <div className="flex items-start space-x-3">
+              <img
+                src={product.imageUrl || "/images/default-product.png"}
+                alt={product.name}
+                className="w-12 h-12 object-cover rounded"
+              />
+              <div>
+                <p className="text-sm font-semibold text-teal-600">
+                  🛍️ {product.name}
+                </p>
+                <p className="text-xs text-gray-600">
+                  Already in cart. You can update quantity from the cart page.
+                </p>
+              </div>
+            </div>,
+            {
+              autoClose: 4000,
+              position: "top-right",
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              hideProgressBar: false,
+              icon: false,
+            }
           );
         }
       } else {
