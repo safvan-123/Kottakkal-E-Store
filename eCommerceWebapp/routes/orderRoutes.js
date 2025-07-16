@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createRazorpayOrder,
+  deleteUserOrder,
   getSingleOrder,
   getUserOrders,
   handleProductReturn,
@@ -15,6 +16,7 @@ router.post("/place", requireSignIn, placeOrder);
 
 router.get("/my-orders", requireSignIn, getUserOrders);
 router.get("/my-orders/:id", requireSignIn, getSingleOrder);
+router.delete("/my-orders/:id", requireSignIn, deleteUserOrder);
 
 router.post("/return", requireSignIn, handleProductReturn);
 
