@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import {
@@ -7,10 +7,14 @@ import {
   FaCheckCircle,
   FaClock,
   FaMoneyCheckAlt,
+  FaTimesCircle,
   FaUndoAlt,
 } from "react-icons/fa";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const OrderDetailsPage = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { token } = useContext(AuthContext);
   const [order, setOrder] = useState(null);
@@ -57,6 +61,66 @@ const OrderDetailsPage = () => {
   }, [showModal]);
   console.log(order);
 
+  const MySwal = withReactContent(Swal);
+
+  const handleDeleteOrder = async (orderId) => {
+    const result = await MySwal.fire({
+      html: `
+      <div style="display: flex; align-items: center; justify-content: center; gap: 14px;">
+        <div style="color: #f59e0b; font-size: 32px;">⚠️</div>
+        <div style="text-align: left;">
+          <div style="font-size: 17px; font-weight: 600;margin-bottom:6px">Cancel Order?</div>
+          <div style="font-size: 12px; color: #555;">Are you sure you want to cancel this order?</div>
+        </div>
+      </div>
+    `,
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+      confirmButtonColor: "#dc2626", // red
+      cancelButtonColor: "#4b5563", // gray
+      width: 340,
+      padding: "1rem",
+      customClass: {
+        popup: "rounded-lg p-2",
+        confirmButton: "text-xs w-20 py-1.5",
+        cancelButton: "text-xs w-20 py-1.5",
+      },
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/orders/my-orders/${orderId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Delete failed:", errorText);
+        toast.error("Failed to cancel order: " + res.statusText);
+        return;
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Order cancelled successfully.");
+        navigate("/myorders");
+      } else {
+        toast.error(data.message || "Cancel failed.");
+      }
+    } catch (err) {
+      console.error("Cancel error:", err);
+      toast.error("Something went wrong while cancelling.");
+    }
+  };
+
   // Handle return submission
   const handleReturnSubmit = async () => {
     if (!selectedReason) {
@@ -92,6 +156,9 @@ const OrderDetailsPage = () => {
         setShowModal(false);
         setSelectedReason("");
         setCustomReason("");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         toast.error(data.message || "Return failed.");
       }
@@ -166,8 +233,6 @@ const OrderDetailsPage = () => {
         </h3>
         <ul className="space-y-5">
           {order.items.map((item, idx) => {
-            console.log(item);
-
             const isReturned = item?.returnRequest;
             console.log(isReturned);
 
@@ -195,18 +260,73 @@ const OrderDetailsPage = () => {
                   <p className="text-blue-700 font-semibold text-sm mr-2">
                     ₹{item?.product?.price}
                   </p>
-                  {/* {isReturnEligible(order.createdAt) && (
-                    <button
-                      onClick={() => {
-                        setReturnItem(item);
-                        setShowModal(true);
-                      }}
-                      className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
-                    >
-                      <FaUndoAlt className="text-sm" />
-                      Return
-                    </button>
-                  )} */}
+
+                  {/* {isReturnEligible(order.createdAt) &&
+                    (item.returnRequest && item?.returnRequest?.isDelivered ? (
+                      <button
+                        disabled
+                        className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+                      >
+                        <FaBoxOpen className="text-sm" />
+                        <span className="tracking-wide">
+                          return Delivery completed
+                        </span>
+                      </button>
+                    ) : item?.returnRequest && (
+  <div className="mt-2 ml-2">
+    {(() => {
+      const requestTime = new Date(item.returnRequest.requestedAt);
+      const now = new Date();
+      const diffInMs = now - requestTime;
+      const diffInMinutes = diffInMs / (1000 * 60);
+
+      if (diffInMinutes < 2) {
+        return (
+          <button
+            disabled
+            className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-yellow-100 text-yellow-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-yellow-300 shadow-sm"
+          >
+            <FaBoxOpen className="text-sm" />
+            <span className="tracking-wide">Return Request Submitted</span>
+          </button>
+        );
+      } else {
+        return (
+          <>
+            <button
+              disabled
+              className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+            >
+              <FaBoxOpen className="text-sm" />
+              <span className="tracking-wide">Pickup Scheduled</span>
+            </button>
+            {diffInMinutes <= 24 * 60 && (
+              <p className="text-[11px] text-gray-500 mt-1">
+                The product will be picked up within 24 hours.
+              </p>
+            )}
+          </>
+        );
+      }
+    })()}
+  </div>
+) 
+: (
+                      <>
+                        {order.status === "Delivered" && (
+                          <button
+                            onClick={() => {
+                              setReturnItem(item);
+                              setShowModal(true);
+                            }}
+                            className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
+                          >
+                            <FaUndoAlt className="text-sm" />
+                            Return
+                          </button>
+                        )}
+                      </>
+                    ))} */}
                   {isReturnEligible(order.createdAt) &&
                     (item.returnRequest && item?.returnRequest?.isDelivered ? (
                       <button
@@ -214,50 +334,68 @@ const OrderDetailsPage = () => {
                         className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
                       >
                         <FaBoxOpen className="text-sm" />
-                        <span className="tracking-wide">Delivered</span>
+                        <span className="tracking-wide">
+                          Return Delivery Completed
+                        </span>
                       </button>
                     ) : item?.returnRequest ? (
                       <div className="mt-2 ml-2">
-                        <button
-                          disabled
-                          className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
-                        >
-                          <FaBoxOpen className="text-sm" />
-                          <span className="tracking-wide">
-                            Pickup Scheduled
-                          </span>
-                        </button>
-
                         {(() => {
                           const requestTime = new Date(
                             item.returnRequest.requestedAt
                           );
                           const now = new Date();
                           const diffInMs = now - requestTime;
-                          const diffInHours = diffInMs / (1000 * 60 * 60);
+                          const diffInMinutes = diffInMs / (1000 * 60);
 
-                          if (diffInHours <= 24) {
+                          if (diffInMinutes < 2) {
                             return (
-                              <p className="text-[11px] text-gray-500 mt-1">
-                                The product will be picked up within 24 hours.
-                              </p>
+                              <button
+                                disabled
+                                className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-yellow-100 text-yellow-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-yellow-300 shadow-sm"
+                              >
+                                <FaBoxOpen className="text-sm" />
+                                <span className="tracking-wide">
+                                  Return Request Submitted
+                                </span>
+                              </button>
+                            );
+                          } else {
+                            return (
+                              <>
+                                <button
+                                  disabled
+                                  className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+                                >
+                                  <FaBoxOpen className="text-sm" />
+                                  <span className="tracking-wide">
+                                    Pickup Scheduled
+                                  </span>
+                                </button>
+                                {diffInMinutes <= 24 * 60 && (
+                                  <p className="text-[11px] text-gray-500 mt-1">
+                                    The product will be picked up within 24
+                                    hours.
+                                  </p>
+                                )}
+                              </>
                             );
                           }
-
-                          return null;
                         })()}
                       </div>
                     ) : (
-                      <button
-                        onClick={() => {
-                          setReturnItem(item);
-                          setShowModal(true);
-                        }}
-                        className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
-                      >
-                        <FaUndoAlt className="text-sm" />
-                        Return
-                      </button>
+                      order.status === "Delivered" && (
+                        <button
+                          onClick={() => {
+                            setReturnItem(item);
+                            setShowModal(true);
+                          }}
+                          className="inline-flex items-center gap-2 px-2 py-1 mt-2 ml-2 rounded-full bg-red-100 text-red-600 text-xs font-medium hover:bg-red-200 transition"
+                        >
+                          <FaUndoAlt className="text-sm" />
+                          Return
+                        </button>
+                      )
                     ))}
                 </div>
               </li>
@@ -265,13 +403,28 @@ const OrderDetailsPage = () => {
           })}
         </ul>
       </div>
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+        {/* Cancel Order Button */}
+        <div className="w-full flex justify-center sm:justify-end order-1 sm:order-none">
+          {order.status !== "Delivered" && (
+            <button
+              onClick={() => handleDeleteOrder(order._id)}
+              className="inline-flex items-center gap-2 px-5 py-2 bg-red-100 text-red-700 border border-red-300 rounded-full text-sm font-semibold shadow-sm hover:bg-red-200 hover:text-red-800 transition duration-300"
+            >
+              Cancel Order
+            </button>
+          )}
+        </div>
 
-      {/* Total */}
-      <div className="text-right">
-        <p className="text-lg font-bold text-gray-800">
-          Total Amount:{" "}
-          <span className="text-blue-600">₹{order.totalAmount.toFixed(2)}</span>
-        </p>
+        {/* Total Amount */}
+        <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+          <p className="text-lg font-bold text-gray-800 text-center sm:text-right">
+            Total Amount:{" "}
+            <span className="text-blue-600">
+              ₹{order.totalAmount.toFixed(2)}
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Return Modal */}

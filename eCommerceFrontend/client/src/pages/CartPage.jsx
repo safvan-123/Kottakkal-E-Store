@@ -108,12 +108,12 @@ const CartPage = () => {
                 >
                   <Link
                     to={`/product/${product._id}`}
-                    className="w-full h-24 sm:h-40 rounded-lg overflow-hidden"
+                    className="w-full h-32 sm:h-44 rounded-lg overflow-hidden bg-gray-100 relative flex justify-center"
                   >
                     <img
                       src={product.imageUrl || "/images/default-product.png"}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className="w-30  h-full object-cover object-center"
                     />
                   </Link>
 

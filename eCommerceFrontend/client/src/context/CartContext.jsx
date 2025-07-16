@@ -120,23 +120,28 @@ export const CartProvider = ({ children }) => {
 
         if (!itemAlreadyInCart) {
           toast.success(
-            <div className="flex items-start space-x-3">
-              <img
-                src={product.imageUrl || "/images/default-product.png"}
-                alt={product.name}
-                className="w-12 h-12 object-cover rounded"
-              />
-              <div>
-                <p className="text-sm font-semibold text-green-600">
-                  ✅ {product.name}
-                </p>
-                <p className="text-xs text-gray-600">
-                  Successfully added to your cart!
-                </p>
+            () => (
+              <div className="flex items-center space-x-3">
+                <div className="w-14 h-14 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                  <img
+                    src={product.imageUrl || "/images/default-product.png"}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-green-600">
+                    ✅ {product.name}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Successfully added to your cart!
+                  </p>
+                </div>
               </div>
-            </div>,
+            ),
             {
-              autoClose: 3000, // 3 seconds
+              autoClose: 3000,
               position: "top-right",
               closeOnClick: true,
               pauseOnHover: true,
@@ -146,28 +151,36 @@ export const CartProvider = ({ children }) => {
             }
           );
         } else if (itemAlreadyInCart) {
-          // toast.info(
-          //   `🛍️ ${product.name} is Already in Your cart! If you need more, change the quantity from the cart page.`,
-          //   {
-          //     autoClose: 4000, // 4 seconds
-          //   }
-          // );
           toast.info(
-            <div className="flex items-start space-x-3">
-              <img
-                src={product.imageUrl || "/images/default-product.png"}
-                alt={product.name}
-                className="w-12 h-12 object-cover rounded"
-              />
-              <div>
-                <p className="text-sm font-semibold text-teal-600">
-                  🛍️ {product.name}
-                </p>
-                <p className="text-xs text-gray-600">
-                  Already in cart. You can update quantity from the cart page.
-                </p>
+            () => (
+              <div className="flex items-center space-x-3">
+                {/* <div className="w-14 h-14 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                  <img
+                    src={product.imageUrl || "/images/default-product.png"}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                </div> */}
+                <div className="flex-shrink-0 w-14 h-14 bg-gray-200 rounded overflow-hidden relative">
+                  <div className="w-14 h-14 rounded-md overflow-hidden flex-shrink-0 bg-gray-100">
+                    <img
+                      src={product.imageUrl || "/images/default-product.png"}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-sm font-semibold text-teal-600">
+                    🛍️ {product.name}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Already in cart. Update quantity from the cart page.
+                  </p>
+                </div>
               </div>
-            </div>,
+            ),
             {
               autoClose: 4000,
               position: "top-right",
