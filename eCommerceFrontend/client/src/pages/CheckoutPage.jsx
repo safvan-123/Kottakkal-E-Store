@@ -38,8 +38,6 @@ const CheckoutPage = () => {
     });
   };
 
-  // console.log(savedData);
-
   const [locationDetails, setLocationDetails] = useState(null);
   const [pincodeError, setPincodeError] = useState("");
   const [loadingPincode, setLoadingPincode] = useState(false);
@@ -947,7 +945,12 @@ const CheckoutPage = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="mt-6 sm:mt-12 flex flex-row flex-wrap justify-between gap-3">
+
+            <div
+              className={`mt-6 sm:mt-12 flex flex-row flex-wrap gap-3 ${
+                currentStep === 1 ? "justify-end" : "justify-between"
+              }`}
+            >
               {currentStep > 1 && (
                 <button
                   onClick={handlePrevStep}

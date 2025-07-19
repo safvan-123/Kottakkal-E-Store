@@ -73,42 +73,42 @@ const ServicesPage = () => {
         </div>
       </div>
       <motion.section
-        className="relative text-center py-16 px-4 sm:px-10 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl shadow-2xl my-12 text-white overflow-hidden"
+        className="relative text-center py-10 sm:py-16 px-3 sm:px-10 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-2xl shadow-2xl my-8 sm:my-12 text-white overflow-hidden"
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
       >
         {/* Floating Icon Decorations */}
         <motion.div
-          className="absolute top-6 left-6 text-white/30 text-4xl"
+          className="absolute top-4 left-4 sm:top-6 sm:left-6 text-white/30 text-3xl sm:text-4xl"
           animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 4, repeat: Infinity }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         >
           <FaClock />
         </motion.div>
         <motion.div
-          className="absolute bottom-6 right-6 text-white/30 text-4xl"
+          className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 text-white/30 text-3xl sm:text-4xl"
           animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 5, repeat: Infinity }}
+          transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         >
           <FaShoppingBag />
         </motion.div>
 
         {/* Heading */}
-        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 drop-shadow-md">
+        <h2 className="text-2xl sm:text-4xl font-extrabold mb-3 sm:mb-4 drop-shadow-md">
           ⏰ Don't Miss Out!!
         </h2>
 
         {/* Subheading */}
-        <p className="text-lg sm:text-xl text-white/90 max-w-xl mx-auto mb-6">
+        <p className="text-sm sm:text-xl text-white/90 max-w-sm sm:max-w-xl mx-auto mb-4 sm:mb-6 px-2 sm:px-0">
           🌟🛍️ മലപ്പുറത്തിന്റെ സ്വന്തം ഓൺലൈൻ സ്റ്റോർ! 🎁 ദിവസേന മികച്ച ഓഫറുകൾ 💥
         </p>
 
-        {/* CTA Button (Optional) */}
+        {/* CTA Button */}
         <motion.button
           whileHover={{ scale: 1.07 }}
           whileTap={{ scale: 0.95 }}
-          className="mt-4 px-8 py-3 bg-white text-indigo-600 font-semibold text-lg rounded-full shadow-lg hover:bg-indigo-100 transition-all duration-300"
+          className="mt-3 sm:mt-4 px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-indigo-600 font-semibold text-sm sm:text-lg rounded-full shadow-lg hover:bg-indigo-100 transition-all duration-300"
           onClick={() => navigate("/shop")}
         >
           🛒 ഇപ്പോൾ തന്നെ ഷോപ്പുചെയ്യൂ
