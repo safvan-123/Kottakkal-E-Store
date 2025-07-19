@@ -108,35 +108,33 @@ export default function OrderSuccessPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-white px-4 py-6 text-gray-800">
       {/* Animated Card Wrapper */}
-      <div className="border border-green-300 bg-white rounded-xl shadow-xl p-8 w-full max-w-md animate-fade-in">
+      <div className="border border-green-300 bg-white rounded-xl shadow-xl p-6 sm:p-8 w-full max-w-md animate-fade-in">
         {/* Success Icon */}
         <div className="flex justify-center mb-4">
-          <CheckCircle className="w-20 h-20 text-green-500" />
+          <CheckCircle className="w-16 sm:w-20 h-16 sm:h-20 text-green-500" />
         </div>
 
         {/* Title */}
-        <h1 className="text-2xl font-bold text-center">
+        <h1 className="text-xl sm:text-2xl font-bold text-center">
           Thank you for your purchase!
         </h1>
-        <p className="text-base text-center mt-2 text-gray-600">
+        <p className="text-sm sm:text-base text-center mt-2 text-gray-600">
           Your order has been placed successfully.
         </p>
 
         {/* Order Summary */}
-        <div className="mt-6 space-y-2 text-sm">
-          <h2 className="text-lg font-semibold border-b pb-2">Order Summary</h2>
+        <div className="mt-6 space-y-2 text-sm sm:text-base">
+          <h2 className="text-base sm:text-lg font-semibold border-b pb-2">
+            Order Summary
+          </h2>
           <p>
             <span className="font-medium">Order ID:</span> {lastOrder?.orderId}
           </p>
-          {/* <p>
-            <span className="font-medium">Items:</span>{" "}
-            {lastOrder?.items?.map((item) => item.product.name)}
-          </p> */}
           <p>
             <span className="font-medium">Items:</span>{" "}
             {lastOrder?.items
               ?.map((item) => item.product?.name)
-              .filter(Boolean) // ensures no undefined names
+              .filter(Boolean)
               .join(", ")}
           </p>
           <p className="font-bold">
@@ -153,24 +151,28 @@ export default function OrderSuccessPage() {
           </p>
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-center gap-4 mt-6">
+        {/* Buttons: Same row on mobile too */}
+        <div className="flex flex-row flex-wrap justify-center gap-3 mt-6">
           <a
             href="/"
-            className="bg-green-500 text-white px-6 py-2 rounded-full shadow hover:bg-green-600 transition"
+            className="bg-green-500 text-white text-sm sm:text-base px-5 sm:px-6 py-2 sm:py-2.5 rounded-full shadow hover:bg-green-600 transition"
           >
             Go to Home
           </a>
           <a
             href="/myorders"
             onClick={() => navigate("/myorders")}
-            className="border border-green-500 text-green-600 px-6 py-2 rounded-full hover:bg-green-50 transition"
+            className="border border-green-500 text-green-600 text-sm sm:text-base px-5 sm:px-6 py-2 sm:py-2.5 rounded-full hover:bg-green-50 transition"
           >
             View Orders
           </a>
         </div>
       </div>
-      <DownloadInvoiceButton order={lastOrder} />
+
+      {/* Download Button */}
+      <div className="mt-4 w-full max-w-md px-2 flex justify-center items-center">
+        <DownloadInvoiceButton order={lastOrder} />
+      </div>
     </div>
   );
 }

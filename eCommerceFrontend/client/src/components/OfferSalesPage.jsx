@@ -78,18 +78,18 @@ const OfferSalesPage = () => {
       {/* Hero Section */}
 
       <motion.section
-        className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden"
+        className="relative text-center py-4 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden"
         initial={{ opacity: 0, y: -60 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
       >
         {/* Floating Glows */}
-        <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
-        <div className="pointer-events-none absolute -bottom-10 -right-10 w-40 h-40 bg-yellow-300 opacity-20 rounded-full filter blur-2xl animate-ping"></div>
+        <div className="pointer-events-none absolute -top-10 -left-10 w-32 h-32 sm:w-40 sm:h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
+        <div className="pointer-events-none absolute -bottom-10 -right-10 w-32 h-32 sm:w-40 sm:h-40 bg-yellow-300 opacity-20 rounded-full filter blur-2xl animate-ping"></div>
 
         {/* Icons */}
         <motion.div
-          className="pointer-events-none absolute top-4 left-4 text-white/30 text-3xl"
+          className="pointer-events-none absolute top-4 left-4 text-white/30 text-2xl sm:text-3xl"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 3, repeat: Infinity }}
         >
@@ -97,7 +97,7 @@ const OfferSalesPage = () => {
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-2xl"
+          className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-xl sm:text-2xl"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 4, repeat: Infinity }}
         >
@@ -105,25 +105,26 @@ const OfferSalesPage = () => {
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute top-6 right-6 text-white/30 text-3xl"
+          className="pointer-events-none absolute top-6 right-6 text-white/30 text-2xl sm:text-3xl"
           animate={{ y: [0, -12, 0] }}
           transition={{ duration: 5, repeat: Infinity }}
         >
           <FaBolt />
         </motion.div>
 
-        <h1 className="text-2xl sm:text-4xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text drop-shadow-lg">
+        {/* Title */}
+        <h1 className="text-xl sm:text-4xl font-extrabold mb-4 tracking-tight flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text drop-shadow-lg">
           <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
-            <FaGift className="text-yellow-300 drop-shadow-lg text-3xl sm:text-4xl" />
-            <FaFire className="text-pink-400 drop-shadow-lg text-3xl sm:text-4xl" />
-            <span className="w-full sm:w-auto text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
+            <FaGift className="text-yellow-300 drop-shadow-lg text-2xl sm:text-4xl" />
+            <FaFire className="text-pink-400 drop-shadow-lg text-2xl sm:text-4xl" />
+            <span className="w-full sm:w-auto text-xl sm:text-4xl font-extrabold bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
               ഇന്നത്തെ മികച്ച ഓഫറുകൾ
             </span>
           </div>
         </h1>
 
         {/* Subtitle */}
-        <p className="text-base sm:text-lg text-white/90 font-medium mb-5 max-w-xl mx-auto">
+        <p className="text-sm sm:text-lg text-white/90 font-medium mb-4 sm:mb-5 max-w-xl mx-auto">
           ഇപ്പോൾ തന്നെ സ്വന്തമാക്കൂ – Limited Time Deals Just for You!
         </p>
 
@@ -131,7 +132,7 @@ const OfferSalesPage = () => {
         <motion.button
           whileHover={{ scale: 1.07, backgroundColor: "#fce7f3" }}
           whileTap={{ scale: 0.96 }}
-          className="relative z-10 mt-2 px-6 py-2 sm:px-8 sm:py-3 bg-white text-pink-600 font-semibold text-base sm:text-lg rounded-full shadow-lg hover:bg-pink-100 transition-all duration-300"
+          className="relative z-10 mt-2 px-5 py-2 sm:px-8 sm:py-3 bg-white text-pink-600 font-semibold text-sm sm:text-lg rounded-full shadow-lg hover:bg-pink-100 transition-all duration-300"
           onClick={() => navigate("/shop")}
         >
           🛍️ Shop Now

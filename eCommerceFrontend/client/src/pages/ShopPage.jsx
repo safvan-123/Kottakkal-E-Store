@@ -604,7 +604,8 @@ const ShopPage = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -60 }}
             transition={{ duration: 1, ease: "easeInOut" }}
-            className="relative text-center py-6 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden border-b border-blue-200"
+            // Adjusted py for smaller screens, px remains the same for consistency
+            className="relative text-center py-4 sm:py-12 px-4 sm:px-8 bg-gradient-to-br from-purple-800 via-fuchsia-700 to-pink-600 text-white rounded-2xl shadow-2xl mb-10 overflow-hidden border-b border-blue-200"
           >
             {/* Floating Glows */}
             <div className="pointer-events-none absolute -top-10 -left-10 w-40 h-40 bg-pink-400 opacity-20 rounded-full filter blur-2xl animate-pulse"></div>
@@ -612,21 +613,21 @@ const ShopPage = () => {
 
             {/* Floating Icons */}
             <motion.div
-              className="pointer-events-none absolute top-4 left-4 text-white/30 text-3xl"
+              className="pointer-events-none absolute top-4 left-4 text-white/30 text-2xl sm:text-3xl" // Reduced icon size for mobile
               animate={{ y: [0, -10, 0] }}
               transition={{ duration: 3, repeat: Infinity }}
             >
               <FaGift />
             </motion.div>
             <motion.div
-              className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-2xl"
+              className="pointer-events-none absolute bottom-6 left-6 text-white/30 text-xl sm:text-2xl" // Reduced icon size for mobile
               animate={{ y: [0, 10, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
             >
               <FaTags />
             </motion.div>
             <motion.div
-              className="pointer-events-none absolute top-6 right-6 text-white/30 text-3xl"
+              className="pointer-events-none absolute top-6 right-6 text-white/30 text-2xl sm:text-3xl" // Reduced icon size for mobile
               animate={{ y: [0, -12, 0] }}
               transition={{ duration: 5, repeat: Infinity }}
             >
@@ -640,7 +641,7 @@ const ShopPage = () => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-                className="text-2xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md mb-2"
+                className="text-xl sm:text-3xl md:text-5xl font-extrabold leading-tight tracking-tight drop-shadow-md mb-2" // Adjusted title font size for mobile
               >
                 <span className="bg-gradient-to-r from-yellow-300 via-white to-yellow-300 text-transparent bg-clip-text">
                   മലപ്പുറത്തിന്റെ വിശ്വസ്ത ഷോപ്പിംഗ് സേവനം!
@@ -653,7 +654,7 @@ const ShopPage = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6, duration: 0.8 }}
-                className="text-sm sm:text-base md:text-xl font-medium text-blue-100"
+                className="text-xs sm:text-base md:text-xl font-medium text-blue-100" // Adjusted subtitle font size for mobile
               >
                 നിങ്ങൾക്കാവശ്യമായ സാധനങ്ങൾ എല്ലാം ഇനി നിങ്ങളെ തേടിയെത്തും! 🛍️ 🚚{" "}
                 <br />
@@ -669,11 +670,12 @@ const ShopPage = () => {
               >
                 <a
                   href="#shop-now"
-                  className="inline-block bg-white text-pink-600 font-semibold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md hover:bg-pink-100 transition-all duration-300 text-sm sm:text-base"
+                  className="inline-block bg-white text-pink-600 font-semibold px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-md hover:bg-pink-100 transition-all duration-300 text-sm sm:text-base" // Adjusted button padding and text size for mobile
                 >
                   ഇപ്പോൾ ഓർഡർ ചെയ്യൂ
                 </a>
-                <span className="text-lg sm:text-xl animate-bounce">👇</span>
+                <span className="text-base sm:text-xl animate-bounce">👇</span>{" "}
+                {/* Adjusted arrow size for mobile */}
               </motion.div>
             </div>
           </motion.section>
