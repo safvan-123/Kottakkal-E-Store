@@ -19,6 +19,7 @@ import emailRoutes from "./routes/emailRoutes.js";
 // import { sendWhatsappMessage } from "./whatsapp-reset-message/sendWhatsappMessage.js";
 import masterCategoryRoutes from "./routes/masterCategoryRoutes.js";
 import subCategoryRoutes from "./routes/subCategoryRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 
 dotenv.config();
 
@@ -60,6 +61,7 @@ app.use("/api/email", emailRoutes);
 app.use("/api/v1/address", addressRoutes);
 app.use("/api/master-categories", masterCategoryRoutes);
 app.use("/api/sub-categories", subCategoryRoutes);
+app.use("/api", chatRoutes);
 
 //rest api
 
