@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -23,11 +23,14 @@ import OrderDetailPage from "./components/OrderDetailPage";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import SubCategoriesPage from "./pages/SubCategoriesPage";
+import Chatbot from "./components/chatbot/Chatbot";
 
 function App() {
   return (
     <Router>
       <Navbar />
+
+      <Chatbot />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<ShopPage />} />
