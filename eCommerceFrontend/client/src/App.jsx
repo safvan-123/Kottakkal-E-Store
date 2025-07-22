@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -24,16 +23,20 @@ import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import SubCategoriesPage from "./pages/SubCategoriesPage";
 import Chatbot from "./components/chatbot/Chatbot";
+import FloatingChatWidget from "./components/chatbot/FloatingChatWidget";
+import { useContext } from "react";
+import { AuthContext } from "./context/AuthContext";
+import Notifications from "./components/Notifications";
 
 function App() {
   return (
     <Router>
       <Navbar />
 
-      <Chatbot />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/shop" element={<ShopPage />} />
+        <Route path="/chat" element={<ShopPage />} />
         <Route path="/product/:productId" element={<SingleProductPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/account" element={<AccountPage />} />
@@ -54,9 +57,7 @@ function App() {
           element={<SubCategoriesPage />}
         />
       </Routes>
-
       <Footer />
-
       <ToastContainer
         position="top-center"
         autoClose={1500}

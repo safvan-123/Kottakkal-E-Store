@@ -1,98 +1,160 @@
+/* ChatbotContainer - Overall styling */
 .chatbot-container {
-  width: 400px;
+  width: 420px; /* Slightly wider for better aesthetics */
   margin: 40px auto;
-  font-family: "Segoe UI", sans-serif;
-  border: 1px solid #ccc;
-  border-radius: 14px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: "Poppins", sans-serif; /* Modern font */
+  border: 1px solid #e0e0e0;
+  border-radius: 18px; /* More rounded corners */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Enhanced shadow */
   overflow: hidden;
-  background: #fff;
+  background: linear-gradient(
+    to bottom right,
+    #ffffff,
+    #f0f2f5
+  ); /* Subtle gradient background */
 }
 
+/* Chatbot Header */
 .chatbot-container h2 {
   margin: 0;
-  padding: 16px;
-  background-color: #4f46e5;
+  padding: 18px;
+  background: linear-gradient(
+    to right,
+    #6a11cb,
+    #2575fc
+  ); /* Vibrant gradient header */
   color: white;
-  font-size: 20px;
+  font-size: 22px; /* Slightly larger font */
   text-align: center;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); /* Softer border */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px; /* Spacing for better readability */
 }
+
+/* Markdown Styling within messages */
 .message strong {
-  font-weight: bold;
+  font-weight: 700; /* Bolder bold */
+  color: #333;
 }
 .message em {
   font-style: italic;
+  color: #555;
 }
 .message ul {
-  padding-left: 1.5rem;
+  padding-left: 1.8rem; /* More indent for lists */
+  list-style-type: disc;
+  color: #444;
 }
 .message a {
-  color: #007bff;
-  text-decoration: underline;
+  color: #007bff; /* Standard link color */
+  text-decoration: none; /* No underline by default */
+  border-bottom: 1px solid #007bff; /* Underline on hover */
+  transition: all 0.2s ease-in-out;
+}
+.message a:hover {
+  color: #0056b3;
+  border-bottom-color: #0056b3;
 }
 
+/* Chat Box - Message display area */
 .chat-box {
-  height: 400px;
-  padding: 16px;
+  height: 450px; /* Taller chat box */
+  padding: 20px;
   overflow-y: auto;
-  background-color: #f9f9f9;
+  background-color: #fcfdff; /* Lighter background */
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
+/* Individual Chat Message */
 .chat-message {
-  margin-bottom: 12px;
+  margin-bottom: 15px; /* More space between messages */
   display: flex;
   flex-direction: column;
 }
 
+/* User Message Bubble */
 .chat-message.user .message {
   align-self: flex-end;
-  background-color: #dbeafe;
-  color: #1e40af;
-  border-radius: 12px 12px 0 12px;
-  padding: 10px 14px;
-  max-width: 75%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(
+    to right,
+    #8e2de2,
+    #4a00e0
+  ); /* User message gradient */
+  color: white;
+  border-radius: 18px 18px 4px 18px; /* More modern bubble shape */
+  padding: 12px 18px;
+  max-width: 80%; /* Slightly wider messages */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+  word-wrap: break-word; /* Ensure long words wrap */
 }
 
+/* Bot Message Bubble */
 .chat-message.bot .message {
   align-self: flex-start;
-  background-color: #e0f2fe;
-  color: #0c4a6e;
-  border-radius: 12px 12px 12px 0;
-  padding: 10px 14px;
-  max-width: 75%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(
+    to left,
+    #2193b0,
+    #6dd5ed
+  ); /* Bot message gradient */
+  color: #ffffff;
+  border-radius: 18px 18px 18px 4px; /* More modern bubble shape */
+  padding: 12px 18px;
+  max-width: 80%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;
 }
 
+/* Input Area - Where user types */
 .input-area {
   display: flex;
-  padding: 10px;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
+  padding: 15px; /* More padding */
+  border-top: 1px solid #e0e0e0;
+  background-color: #ffffff;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Shadow for input area */
 }
 
+/* Input Field */
 .input-area input {
   flex: 1;
-  padding: 10px 14px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  margin-right: 10px;
+  padding: 12px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 25px; /* Pill shape */
+  font-size: 15px;
+  margin-right: 12px;
   outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+.input-area input:focus {
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.2); /* Focus glow */
+}
+
+/* Send Button */
 .input-area button {
-  background-color: #4f46e5;
+  background: linear-gradient(to right, #6a11cb, #2575fc); /* Button gradient */
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 12px 22px;
+  border-radius: 25px; /* Pill shape */
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s ease;
+  font-weight: 600; /* Slightly bolder text */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .input-area button:hover {
-  background-color: #4338ca;
+  transform: translateY(-2px); /* Lift effect on hover */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(
+    to right,
+    #4a00e0,
+    #1a56c0
+  ); /* Darker gradient on hover */
+}
+
+.input-area button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }

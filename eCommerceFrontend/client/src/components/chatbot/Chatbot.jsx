@@ -27,7 +27,8 @@ function Chatbot() {
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/chat`,
+        // `${import.meta.env.VITE_API_URL}/api/chat`,
+        "http://localhost:5050/api/chat",
         { message: input },
         {
           headers: {
@@ -47,7 +48,7 @@ function Chatbot() {
 
   return (
     <div className="chatbot-container">
-      <h2>🛍️ Shop Assistant</h2>
+      <h2>🛍️ Kottakkal E Store AI Assistant</h2>
       <div className="chat-box">
         {messages.map((msg, index) => (
           <div key={index} className={`chat-message ${msg.sender}`}>

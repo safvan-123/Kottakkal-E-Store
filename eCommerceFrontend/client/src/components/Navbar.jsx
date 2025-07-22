@@ -21,8 +21,10 @@ import { useCategory } from "../context/CategoryContext";
 import { AuthContext } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import Notifications from "./Notifications";
 
 export default function Navbar() {
+  const { token } = useContext(AuthContext);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -267,6 +269,9 @@ export default function Navbar() {
             >
               <FaTag className="text-lg mb-0.5" /> Sale
             </button>
+          </li>
+          <li>
+            <Notifications token={token} />
           </li>
         </ul>
       </nav>
