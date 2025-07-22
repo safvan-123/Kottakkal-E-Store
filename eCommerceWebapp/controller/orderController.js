@@ -1,5 +1,6 @@
 import Order from "../models/Order.js";
 import orderCounter from "../models/orderCounter.js";
+import Notification from "../models/notificationModel.js";
 import { razorpay } from "../utils/razorpay.js";
 import { verifySignature } from "../utils/verifySignature.js";
 
@@ -36,6 +37,7 @@ export const placeOrder = async (req, res) => {
 
     let isPaid = false;
 
+    // 🔒 Verify payment signature if ONLINE
     if (paymentMethod === "ONLINE") {
       const isValid = verifySignature(paymentInfo);
       if (!isValid)
@@ -45,19 +47,20 @@ export const placeOrder = async (req, res) => {
         });
       isPaid = true;
     }
-    // Get the next orderId
+
+    // 🔢 Get the next order ID
     const getNextOrderId = async () => {
       const counter = await orderCounter.findOneAndUpdate(
         { name: "orderId" },
         { $inc: { value: 1 } },
         { new: true, upsert: true }
       );
-
-      return 1000 + counter.value; // start from 1001
+      return 1000 + counter.value; // e.g., starts from 1001
     };
     const orderId = await getNextOrderId();
 
-    const order = new Order({
+    // 🛒 Create new order
+    const newOrder = new Order({
       orderId,
       user: userId,
       items,
@@ -69,12 +72,43 @@ export const placeOrder = async (req, res) => {
       paymentInfo: paymentMethod === "ONLINE" ? paymentInfo : {},
     });
 
-    await order.save();
+    await newOrder.save();
 
-    res.status(201).json({ success: true, order });
+    // 🔔 Create notification
+    await Notification.create({
+      user: userId,
+      message: `Your order ${newOrder.orderId} has been placed successfully.`,
+      type: "order",
+      orderId: newOrder.orderId,
+    });
+
+    res.status(201).json({ success: true, order: newOrder });
   } catch (err) {
     console.error("Error placing order:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+export const getUserNotifications = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const notifications = await Notification.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .limit(20); // optional limit
+
+    res.status(200).json(notifications);
+    console.log(notifications);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const markNotificationRead = async (req, res) => {
+  try {
+    await Notification.findByIdAndUpdate(req.params.id, { isRead: true });
+    res.status(200).json({ message: "Notification marked as read" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
 

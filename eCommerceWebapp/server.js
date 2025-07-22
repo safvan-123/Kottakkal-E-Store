@@ -20,6 +20,7 @@ import emailRoutes from "./routes/emailRoutes.js";
 import masterCategoryRoutes from "./routes/masterCategoryRoutes.js";
 import subCategoryRoutes from "./routes/subCategoryRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 dotenv.config();
 
@@ -62,6 +63,7 @@ app.use("/api/v1/address", addressRoutes);
 app.use("/api/master-categories", masterCategoryRoutes);
 app.use("/api/sub-categories", subCategoryRoutes);
 app.use("/api", chatRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 //rest api
 
