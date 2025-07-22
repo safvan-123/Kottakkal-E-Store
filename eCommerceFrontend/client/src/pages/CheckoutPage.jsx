@@ -244,7 +244,7 @@ const CheckoutPage = () => {
 
       const token = localStorage.getItem("token");
 
-      const response = await fetch(`http://localhost:5050/api/orders/place`, {
+      const response = await fetch(`${API_BASE_URL}/api/orders/place`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -302,7 +302,7 @@ const CheckoutPage = () => {
     } else if (paymentMethod === "online") {
       try {
         const razorpayOrderResponse = await fetch(
-          `http://localhost:5050/api/orders/razorpay-order`,
+          `${API_BASE_URL}/api/orders/razorpay-order`,
           {
             method: "POST",
             headers: {
