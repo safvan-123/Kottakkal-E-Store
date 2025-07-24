@@ -1,6 +1,7 @@
 import Order from "../models/Order.js";
 import orderCounter from "../models/orderCounter.js";
 import Notification from "../models/notificationModel.js";
+import ProductModel from "../models/ProductModel.js";
 import { razorpay } from "../utils/razorpay.js";
 import { verifySignature } from "../utils/verifySignature.js";
 

@@ -1,3 +1,4 @@
+import notificationModel from "../models/notificationModel.js";
 import Order from "../models/Order.js";
 import "../models/ProductModel.js";
 import "../models/userModel.js";
@@ -18,9 +19,8 @@ export const getAllOrders = async (req, res) => {
 // PUT: Update order status and payment
 export const updateOrderStatus = async (req, res) => {
   const { id } = req.params;
+
   const { status, isPaid } = req.body;
-  console.log("✅ isPaid received in backend:", isPaid);
-  console.log("✅ status received in backend:", status);
 
   if (!status) {
     return res
@@ -29,7 +29,9 @@ export const updateOrderStatus = async (req, res) => {
   }
 
   try {
-    const order = await Order.findById(id);
+    // const order = await Order.findById(id);
+    const order = await Order.findById(id).populate("user", "_id name");
+
     if (!order) {
       return res
         .status(404)
@@ -37,12 +39,32 @@ export const updateOrderStatus = async (req, res) => {
     }
 
     order.status = status;
-    order.isPaid = isPaid;
+    order.isPaid = isPaid; // 👈 always reliable, and cannot be faked
 
     if (typeof isPaid === "boolean") {
       order.isPaid = isPaid;
     }
+    let notificationMsg;
+    if (status === "Order Confirmed") {
+      notificationMsg = `✅ Your order ${order.orderId} has been Confirmed.`;
+    } else if (status === "Delivered") {
+      notificationMsg = `📦 Your order ${order.orderId} has been Delivered.`;
+    }
 
+    if (notificationMsg) {
+      console.log(
+        "Creating notification for user:",
+        order.user._id,
+        notificationMsg
+      );
+      await notificationModel.create({
+        user: order.user._id,
+
+        message: notificationMsg,
+        type: "order",
+        orderId: order.orderId,
+      });
+    }
     await order.save();
 
     res.status(200).json({ success: true, message: "Order updated", order });
@@ -89,10 +111,12 @@ export const getAllReturnRequests = async (req, res) => {
 export const updateReturnDeliveryStatus = async (req, res) => {
   const { orderId, productId } = req.params;
   const { isDelivered } = req.body;
-  console.log(orderId, productId, isDelivered);
 
   try {
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(orderId)
+      .populate("user", "_id name")
+      .populate("items.product", "name price _id imageUrl");
+
     if (!order) {
       return res
         .status(404)
@@ -110,8 +134,29 @@ export const updateReturnDeliveryStatus = async (req, res) => {
     }
 
     returnItem.isDelivered = isDelivered;
-    returnItem.deliveredAt = isDelivered ? new Date() : null;
 
+    returnItem.deliveredAt = isDelivered ? new Date() : null;
+    let notificationMsg;
+    if (returnItem.isDelivered === true) {
+      notificationMsg = `📦 Your return request of order ${order.orderId} has been Delivered.`;
+    } else if (returnItem.isDelivered === false) {
+      notificationMsg = `  Your return request of order ${order.orderId} has been Confirmed for delivery.✅ `;
+    }
+
+    if (notificationMsg) {
+      console.log(
+        "Creating notification for user:",
+        order.user._id,
+        notificationMsg
+      );
+      await notificationModel.create({
+        user: order.user._id,
+
+        message: notificationMsg,
+        type: "order",
+        orderId: order.orderId,
+      });
+    }
     await order.save();
 
     res.status(200).json({
