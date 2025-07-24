@@ -242,7 +242,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      <nav
+      {/* <nav
         className="sticky top-[72px] z-40 bg-white shadow-sm lg:hidden border-b border-gray-200"
         style={{ marginBottom: "0px", paddingBottom: "0px" }}
       >
@@ -272,12 +272,58 @@ export default function Navbar() {
             </button>
           </li>
           <li>
-            {/* <header className="flex justify-end  bg-white shadow-md"> */}
-            <NotificationBell unreadCount={unreadCount} />
-            {/* </header> */}
+            <button
+              onClick={() => navigate("/notifications")}
+              className="relative flex items-center gap-2 text-gray-700 hover:text-indigo-600"
+            >
+              <NotificationBell unreadCount={unreadCount} />
+            </button>
           </li>
         </ul>
-      </nav>
+      </nav> */}
+
+      <>
+        {/* 📱 Bottom mobile navbar (unchanged) */}
+        <nav
+          className="sticky top-[72px] z-40 bg-white shadow-sm lg:hidden border-b border-gray-200"
+          style={{ marginBottom: "0px", paddingBottom: "0px" }}
+        >
+          <ul className="flex justify-around items-center py-2">
+            <li>
+              <button
+                onClick={() => navigate("/")}
+                className="flex flex-col items-center text-gray-700 hover:text-indigo-600 text-xs font-medium px-2 py-1"
+              >
+                <FaHome className="text-lg mb-0.5" /> Home
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => navigate("/shop")}
+                className="flex flex-col items-center text-gray-700 hover:text-indigo-600 text-xs font-medium px-2 py-1"
+              >
+                <FaStore className="text-lg mb-0.5" /> Shop
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => navigate("/offersalepage")}
+                className="flex flex-col items-center text-gray-700 hover:text-indigo-600 text-xs font-medium px-2 py-1"
+              >
+                <FaTag className="text-lg mb-0.5" /> Sale
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => navigate("/notifications")}
+                className="relative flex items-center gap-2 text-gray-700 hover:text-indigo-600"
+              >
+                <NotificationBell unreadCount={unreadCount} />
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </>
 
       <nav
         className="bg-gray-50 border-t border-gray-200 hidden lg:block"
@@ -316,6 +362,16 @@ export default function Navbar() {
               24/7 Support:{" "}
               <strong className="text-gray-900">+91 7560929242</strong>
             </span>
+
+            {/* 🔔 Bell icon for desktop view */}
+            <div className="hidden lg:flex justify-end items-center ps-9 pt-1">
+              <button
+                onClick={() => navigate("/notifications")}
+                className="relative text-gray-700 hover:text-indigo-600"
+              >
+                <NotificationBell unreadCount={unreadCount} />
+              </button>
+            </div>
           </div>
         </div>
       </nav>
