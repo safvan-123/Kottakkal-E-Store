@@ -41,9 +41,7 @@ const ReturnRequests = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${
-          import.meta.env.VITE_API_URL
-        }/api/orders/return-status/${orderMongoId}/${productId}`,
+        `${API_BASE_URL}/api/orders/return-status/${orderMongoId}/${productId}`,
         { isDelivered },
         {
           headers: {
