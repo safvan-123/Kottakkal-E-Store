@@ -10,6 +10,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { CartProvider } from "./context/CartContext.jsx";
 import { WishlistProvider } from "./context/WishlistContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { NotificationProvider } from "./context/NotificationContext.jsx";
 
 const clientId =
   "226251661150-764glgmht3fd65okj8acfacs41rcilgp.apps.googleusercontent.com";
@@ -23,7 +24,9 @@ createRoot(document.getElementById("root")).render(
           <ProductProvider>
             <CategoryProvider>
               <WishlistProvider>
-                <App />
+                <NotificationProvider>
+                  <App />
+                </NotificationProvider>
               </WishlistProvider>
             </CategoryProvider>
           </ProductProvider>

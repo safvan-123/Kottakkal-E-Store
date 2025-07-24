@@ -26,15 +26,23 @@ import Chatbot from "./components/chatbot/Chatbot";
 import FloatingChatWidget from "./components/chatbot/FloatingChatWidget";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
-import Notifications from "./components/Notifications";
+import Notifications from "./components/notifications/Notifications";
+import NotificationsPage from "./components/notifications/Notifications";
 
 function App() {
+  const { token } = useContext(AuthContext);
+
   return (
     <Router>
       <Navbar />
 
       <Routes>
         <Route path="/" element={<Home />} />
+
+        <Route
+          path="/notifications"
+          element={<NotificationsPage token={token} />}
+        />
         <Route path="/shop" element={<ShopPage />} />
         <Route path="/chat" element={<ShopPage />} />
         <Route path="/product/:productId" element={<SingleProductPage />} />

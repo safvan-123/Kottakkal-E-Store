@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaShoppingCart,
   FaUser,
@@ -21,14 +21,15 @@ import { useCategory } from "../context/CategoryContext";
 import { AuthContext } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
-import Notifications from "./Notifications";
+import Notifications from "./notifications/Notifications";
+import NotificationBell from "./notifications/NotificationBell";
+import { useNotification } from "../context/NotificationContext";
 
 export default function Navbar() {
-  const { token } = useContext(AuthContext);
+  const { unreadCount } = useNotification();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("");
-
   const { cartItems } = useCart();
   const { categories } = useCategory();
   const { isLoggedIn, user, logout } = useContext(AuthContext);
@@ -271,7 +272,9 @@ export default function Navbar() {
             </button>
           </li>
           <li>
-            <Notifications token={token} />
+            {/* <header className="flex justify-end  bg-white shadow-md"> */}
+            <NotificationBell unreadCount={unreadCount} />
+            {/* </header> */}
           </li>
         </ul>
       </nav>
