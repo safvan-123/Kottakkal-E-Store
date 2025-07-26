@@ -4,6 +4,7 @@ import Notification from "../models/notificationModel.js";
 import ProductModel from "../models/ProductModel.js";
 import { razorpay } from "../utils/razorpay.js";
 import { verifySignature } from "../utils/verifySignature.js";
+import notificationModel from "../models/notificationModel.js";
 
 // 1. Create Razorpay Order
 export const createRazorpayOrder = async (req, res) => {
@@ -73,16 +74,15 @@ export const placeOrder = async (req, res) => {
       paymentInfo: paymentMethod === "ONLINE" ? paymentInfo : {},
     });
 
-    await newOrder.save();
-
     // 🔔 Create notification
     await Notification.create({
       user: userId,
-      message: `Your order ${newOrder.orderId} has been placed successfully.`,
+      message: `🎉 നിങ്ങളുടെ ഓർഡർ സ്ഥിരീകരിച്ചിരിക്കുന്നു! 🎉\n\n 📋 ഓർഡർ നമ്പർ: ${newOrder.orderId}\n\n⏰ Delivery within 24 hours \n\n📞 24/7 കസ്റ്റമർ സപ്പോർട്ട് , ☎️ 7560929242`,
       type: "order",
       orderId: newOrder.orderId,
     });
 
+    await newOrder.save();
     res.status(201).json({ success: true, order: newOrder });
   } catch (err) {
     console.error("Error placing order:", err);
@@ -249,6 +249,7 @@ export const handleProductReturn = async (req, res) => {
       customNote,
       requestedAt: new Date(),
     });
+    console.log(order);
 
     await order.save();
     // You could save this info in a new "returns" array or collection
