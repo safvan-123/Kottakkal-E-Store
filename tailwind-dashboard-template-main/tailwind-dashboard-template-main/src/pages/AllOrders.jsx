@@ -12,7 +12,8 @@ const AllOrders = () => {
   console.log(selectedOrder);
 
   // Base URL for your API
-  const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+  // ${import.meta.env.VITE_API_URL}
+  const API_BASE_URL = `http://localhost:5050/api`;
 
   const fetchOrders = async () => {
     try {

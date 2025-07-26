@@ -8,7 +8,7 @@ const ReturnRequests = () => {
   const [error, setError] = useState("");
 
   //   const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
-  const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
+  const API_BASE_URL = "http://localhost:5050";
 
   const fetchReturnRequests = async () => {
     try {
@@ -24,6 +24,7 @@ const ReturnRequests = () => {
           },
         }
       );
+      console.log(data);
 
       if (data.success) setRequests(data.requests);
       else setError("Failed to fetch return requests.");
