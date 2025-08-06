@@ -7,7 +7,7 @@ const notificationSchema = new mongoose.Schema(
     isRead: { type: Boolean, default: false },
     type: {
       type: String,
-      enum: ["order", "promo", "system"],
+      enum: ["order", "promo", "system", "return"],
       default: "order",
     },
     orderId: { type: String }, // Optional link to order

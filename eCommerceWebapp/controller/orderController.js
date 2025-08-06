@@ -5,7 +5,7 @@ import ProductModel from "../models/ProductModel.js";
 import { razorpay } from "../utils/razorpay.js";
 import { verifySignature } from "../utils/verifySignature.js";
 import notificationModel from "../models/notificationModel.js";
-
+import Product from "../models/ProductModel.js";
 // 1. Create Razorpay Order
 export const createRazorpayOrder = async (req, res) => {
   try {
@@ -209,12 +209,172 @@ export const deleteUserOrder = async (req, res) => {
   }
 };
 
+// export const handleProductReturn = async (req, res) => {
+//   try {
+//     const { orderId, productId, reason, customNote } = req.body;
+//     console.log(orderId, productId, reason, customNote);
+
+//     if (!orderId || !productId || !reason) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Missing required fields." });
+//     }
+
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Order not found" });
+//     }
+
+//     // Optional: Verify the user owns this order
+//     if (order.user.toString() !== req.user._id.toString()) {
+//       return res
+//         .status(403)
+//         .json({ success: false, message: "Unauthorized return attempt" });
+//     }
+
+//     // Optional: Check if order is within 7-day window
+//     const createdAt = new Date(order.createdAt);
+//     const now = new Date();
+//     const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+//     if (diffInDays > 7) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Return period expired." });
+//     }
+//     order.returnRequests.push({
+//       productId,
+//       reason,
+//       customNote,
+//       requestedAt: new Date(),
+//     });
+//     console.log(order);
+
+//     await order.save();
+//     // You could save this info in a new "returns" array or collection
+//     // For now, just log it or send success response
+//     console.log("📦 Return Requested:", {
+//       orderId,
+//       productId,
+//       reason,
+//       customNote,
+//     });
+//     // 🔔 Send notification
+//     const notificationMsg = `📦 Return Pickup Confirmed!
+
+// നിങ്ങളുടെ *${productName}*
+// (ഓർഡർ നമ്പർ: #${order.orderId})
+// pickup confirm ചെയ്‌തിട്ടുണ്ട് ✅`;
+
+//     // 🛎️ Save notification (assuming you have a Notification model)
+//     await notificationModel.create({
+//       user: order.user._id,
+//       type: "return",
+//       message: notificationMsg,
+//       orderId: order.orderId,
+//     });
+
+//     console.log("📬 Notification created for return pickup");
+//     res.status(200).json({
+//       success: true,
+//       message: "Return request received.",
+//     });
+//   } catch (error) {
+//     console.error("Return request failed:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+// Make sure Product model is imported
+
+// export const handleProductReturn = async (req, res) => {
+//   try {
+//     const { orderId, productId, reason, customNote } = req.body;
+//     console.log(orderId, productId, reason, customNote);
+
+//     if (!orderId || !productId || !reason) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Missing required fields." });
+//     }
+
+//     const order = await Order.findById(orderId);
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Order not found" });
+//     }
+
+//     // Check if user owns the order
+//     if (order.user.toString() !== req.user._id.toString()) {
+//       return res
+//         .status(403)
+//         .json({ success: false, message: "Unauthorized return attempt" });
+//     }
+
+//     // Check 7-day return window
+//     const createdAt = new Date(order.createdAt);
+//     const now = new Date();
+//     const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+//     if (diffInDays > 7) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Return period expired." });
+//     }
+
+//     // Add to returnRequests
+//     order.returnRequests.push({
+//       productId,
+//       reason,
+//       customNote,
+//       requestedAt: new Date(),
+//     });
+
+//     await order.save();
+
+//     // 🔍 Get product name for notification
+//     const product = await Product.findById(productId);
+//     const productName = product?.name || "Product";
+
+//     // 🔔 Create Notification
+//     const notificationMsg = `📦 Return Pickup Confirmed!
+
+// നിങ്ങളുടെ *${productName}*
+// (ഓർഡർ നമ്പർ: #${order.orderId})
+// pickup confirm ചെയ്‌തിട്ടുണ്ട് ✅`;
+
+//     await notificationModel.create({
+//       user: order.user,
+//       type: "return",
+//       message: notificationMsg,
+//       orderId: order.orderId,
+//     });
+
+//     console.log("📬 Notification created for return pickup");
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Return request received.",
+//     });
+//   } catch (error) {
+//     console.error("Return request failed:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
 export const handleProductReturn = async (req, res) => {
   try {
     const { orderId, productId, reason, customNote } = req.body;
-    console.log(orderId, productId, reason, customNote);
+    console.log("📥 Return Request Received with:", {
+      orderId,
+      productId,
+      reason,
+      customNote,
+      user: req.user._id,
+    });
 
     if (!orderId || !productId || !reason) {
+      console.log("❌ Missing required fields");
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields." });
@@ -222,51 +382,73 @@ export const handleProductReturn = async (req, res) => {
 
     const order = await Order.findById(orderId);
     if (!order) {
+      console.log("❌ Order not found:", orderId);
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
 
-    // Optional: Verify the user owns this order
+    console.log("✅ Order found:", order._id);
+
+    // Check if user owns the order
     if (order.user.toString() !== req.user._id.toString()) {
+      console.log("❌ Unauthorized return attempt by user:", req.user._id);
       return res
         .status(403)
         .json({ success: false, message: "Unauthorized return attempt" });
     }
 
-    // Optional: Check if order is within 7-day window
+    // Check 7-day return window
     const createdAt = new Date(order.createdAt);
     const now = new Date();
     const diffInDays = (now - createdAt) / (1000 * 60 * 60 * 24);
+    console.log(`📅 Order age: ${diffInDays.toFixed(2)} days`);
+
     if (diffInDays > 7) {
+      console.log("❌ Return period expired");
       return res
         .status(400)
         .json({ success: false, message: "Return period expired." });
     }
+
+    // Add return request
     order.returnRequests.push({
       productId,
       reason,
       customNote,
       requestedAt: new Date(),
     });
-    console.log(order);
 
     await order.save();
-    // You could save this info in a new "returns" array or collection
-    // For now, just log it or send success response
-    console.log("📦 Return Requested:", {
-      orderId,
-      productId,
-      reason,
-      customNote,
+    console.log("📦 Return request added to order and saved");
+
+    // Get product details
+    const product = await Product.findById(productId);
+    const productName = product?.name || "Product";
+    console.log("🔍 Product for return:", productName);
+
+    const notificationMsg = `📦 Return Pickup Confirmed!
+
+നിങ്ങളുടെ ${productName} എന്ന product\n
+(ഓർഡർ നമ്പർ: ${order.orderId})\n  
+pickup confirm ചെയ്‌തിട്ടുണ്ട്. ✅`;
+
+    // Save notification
+    const notification = await notificationModel.create({
+      user: order.user,
+      type: "return",
+      message: notificationMsg,
+      orderId: order.orderId,
     });
+
+    console.log("📬 Notification created:", notification);
 
     res.status(200).json({
       success: true,
       message: "Return request received.",
     });
   } catch (error) {
-    console.error("Return request failed:", error);
+    console.error("❌ Return request failed:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

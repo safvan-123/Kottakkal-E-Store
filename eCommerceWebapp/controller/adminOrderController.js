@@ -17,9 +17,64 @@ export const getAllOrders = async (req, res) => {
 };
 
 // PUT: Update order status and payment
+// export const updateOrderStatus = async (req, res) => {
+//   const { id } = req.params;
+
+//   const { status, isPaid } = req.body;
+
+//   if (!status) {
+//     return res
+//       .status(400)
+//       .json({ success: false, message: "Status is required" });
+//   }
+
+//   try {
+//     // const order = await Order.findById(id);
+//     const order = await Order.findById(id).populate("user", "_id name");
+
+//     if (!order) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Order not found" });
+//     }
+
+//     order.status = status;
+//     order.isPaid = isPaid; // 👈 always reliable, and cannot be faked
+
+//     if (typeof isPaid === "boolean") {
+//       order.isPaid = isPaid;
+//     }
+//     let notificationMsg;
+//     if (status === "Delivered") {
+//       notificationMsg = `📦 നിങ്ങളുടെ order ${order.orderId} delivery ചെയ്തിട്ടുണ്ട്.\n\nThank you for shopping with us! 🛍️`;
+//     } else {
+//       notificationMsg = "";
+//     }
+
+//     if (notificationMsg) {
+//       console.log(
+//         "Creating notification for user:",
+//         order.user._id,
+//         notificationMsg
+//       );
+//       await notificationModel.create({
+//         user: order.user._id,
+
+//         message: notificationMsg,
+//         type: "order",
+//         orderId: order.orderId,
+//       });
+//     }
+//     await order.save();
+
+//     res.status(200).json({ success: true, message: "Order updated", order });
+//   } catch (error) {
+//     console.error("❌ Failed to update order:", error);
+//     res.status(500).json({ success: false, message: "Failed to update order" });
+//   }
+// };
 export const updateOrderStatus = async (req, res) => {
   const { id } = req.params;
-
   const { status, isPaid } = req.body;
 
   if (!status) {
@@ -29,7 +84,6 @@ export const updateOrderStatus = async (req, res) => {
   }
 
   try {
-    // const order = await Order.findById(id);
     const order = await Order.findById(id).populate("user", "_id name");
 
     if (!order) {
@@ -38,33 +92,28 @@ export const updateOrderStatus = async (req, res) => {
         .json({ success: false, message: "Order not found" });
     }
 
+    // ⚠️ Prevent duplicate notification
+    const wasDelivered = order.status === "Delivered";
+    const isChangingToDelivered = status === "Delivered" && !wasDelivered;
+
     order.status = status;
-    order.isPaid = isPaid; // 👈 always reliable, and cannot be faked
 
     if (typeof isPaid === "boolean") {
       order.isPaid = isPaid;
     }
-    let notificationMsg;
-    if (status === "Order Confirmed") {
-      notificationMsg = `🎉 നിങ്ങളുടെ ഓർഡർ 📋 ${order.orderId}സ്ഥിരീകരിച്ചിരിക്കുന്നു! 🎉`;
-    } else if (status === "Delivered") {
-      notificationMsg = `📦 നിങ്ങളുടെ order ${order.orderId} delivery ചെയ്തിട്ടുണ്ട്.\n\nThank you for shopping with us! 🛍️`;
-    }
 
-    if (notificationMsg) {
-      console.log(
-        "Creating notification for user:",
-        order.user._id,
-        notificationMsg
-      );
+    // ✅ Only send notification if status is changed **to** Delivered
+    if (status === "Delivered" && !wasDelivered) {
+      const notificationMsg = `📦 നിങ്ങളുടെ order ${order.orderId} delivery ചെയ്തിട്ടുണ്ട്.\n\nThank you for shopping with us! 🛍️`;
+
       await notificationModel.create({
         user: order.user._id,
-
         message: notificationMsg,
         type: "order",
         orderId: order.orderId,
       });
     }
+
     await order.save();
 
     res.status(200).json({ success: true, message: "Order updated", order });
@@ -97,7 +146,6 @@ export const getAllReturnRequests = async (req, res) => {
         });
       });
     });
-    console.log(allRequests);
 
     res.status(200).json({ success: true, requests: allRequests });
   } catch (err) {
@@ -119,53 +167,62 @@ export const updateReturnDeliveryStatus = async (req, res) => {
       .populate("returnRequests.productId", "name");
 
     if (!order) {
+      console.warn("⚠️ Order not found");
       return res
         .status(404)
         .json({ success: false, message: "Order not found" });
     }
 
-    const returnItem = order.returnRequests?.find(
-      (r) => r.productId?.toString() === productId
-    );
+    order.returnRequests.forEach((r, index) => {
+      console.log(
+        `🔁 [${index}] productId: ${r.productId}, name: ${
+          r.productId?.name
+        }, type: ${typeof r.productId}`
+      );
+    });
+    const returnItem = order.returnRequests?.find((r) => {
+      const actualId =
+        r.productId?._id?.toString?.() || r.productId?.toString?.();
+      return actualId === productId;
+    });
 
     if (!returnItem) {
+      console.warn("⚠️ Return item not found in order's returnRequests");
       return res
         .status(404)
         .json({ success: false, message: "Return item not found" });
     }
 
     returnItem.isDelivered = isDelivered;
-
     returnItem.deliveredAt = isDelivered ? new Date() : null;
 
-    // console.log(
-    //   `🔄 Updating return status for: ${
-    //     productDetails?.product?.name || "Unknown Product"
-    //   }`
-    // );
+    let notificationMsg;
 
-    // let notificationMsg;
-    // if (returnItem.isDelivered === true) {
-    //   notificationMsg = `📬 Return completed! Your ${returnItem?.productId?.name} from order #${order.orderId} has been delivered back successfully.\nWe appreciate your cooperation. 😊`;
-    // } else if (returnItem.isDelivered === false) {
-    //   notificationMsg = `  Your return request of ${returnItem?.productId?.name} orderId ${order.orderId} has been Confirmed for delivery.✅ `;
-    // }
-    //  await Notification.create({
-    //       user: userId,
-    //       message: `🎉 Your order Id ${newOrder.orderId} has been placed successfully.\nThank you for shopping with us! 🛍️`,
-    //       type: "order",
-    //       orderId: newOrder.orderId,
-    //     });
-    // if (notificationMsg) {
+    if (isDelivered === true) {
+      notificationMsg = `📬 Return Completed!
 
-    //   await notificationModel.create({
-    //     user: order.user._id,
+നിങ്ങളുടെ ${returnItem?.productId?.name} എന്ന product\n 
+(ഓർഡർ നമ്പർ: ${order.orderId})\n  
+return സ്വീകരിച്ചിട്ടുണ്ട്.  
 
-    //     message: notificationMsg,
-    //     type: "order",
-    //     orderId: order.orderId,
-    //   });
-    // }
+നിങ്ങളുടെ സഹകരണത്തിന് ഹൃദയപൂര്‍വം നന്ദി 😊`;
+    } else if (isDelivered === false) {
+      notificationMsg = `📦 Return Pickup Confirmed!
+
+നിങ്ങളുടെ ${returnItem?.productId?.name} എന്ന product\n
+(ഓർഡർ നമ്പർ: ${order.orderId})\n  
+pickup confirm ചെയ്‌തിട്ടുണ്ട്. ✅`;
+    }
+
+    if (notificationMsg) {
+      await notificationModel.create({
+        user: order.user._id,
+        message: notificationMsg,
+        type: "order",
+        orderId: order.orderId,
+      });
+    }
+
     await order.save();
 
     res.status(200).json({
