@@ -13,8 +13,8 @@ const AllOrders = () => {
 
   // Base URL for your API
   // ${import.meta.env.VITE_API_URL}
-  const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
-  //  `http://localhost:5050/api`;
+  // const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
+  const API_BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
   const fetchOrders = async () => {
     try {
@@ -49,8 +49,62 @@ const AllOrders = () => {
     fetchOrders();
   }, []);
 
+  // const handleStatusChange = async (orderId, status, isPaid) => {
+  //   const currentOrder = orders.find((o) => o._id === orderId);
+
+  //   // ✅ Prevent unnecessary API calls if status and isPaid are unchanged
+  //   if (
+  //     currentOrder &&
+  //     currentOrder.status === "Delivered" &&
+  //     currentOrder.isPaid === isPaid
+  //   ) {
+  //     console.log("No changes detected. Skipping update.");
+  //     return;
+  //   }
+
+  //   setStatusUpdating(true);
+
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     console.log("Sent status:", status, "Sent isPaid:", isPaid);
+
+  //     await axios.put(
+  //       `${API_BASE_URL}/orders/${orderId}`,
+  //       { status, isPaid },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           "Cache-Control": "no-cache",
+  //           Pragma: "no-cache",
+  //           Expires: "0",
+  //         },
+  //       }
+  //     );
+
+  //     alert(`Order ${orderId.slice(-6)} updated successfully`);
+  //     fetchOrders();
+  //   } catch (err) {
+  //     console.error("❌ Error:", err.response?.data || err.message);
+  //     alert("Failed to update order. Please try again.");
+  //   } finally {
+  //     setStatusUpdating(false);
+  //   }
+  // };
   const handleStatusChange = async (orderId, status, isPaid) => {
+    const currentOrder = orders.find((o) => o._id === orderId);
+
+    // ✅ Prevent unnecessary API call if status and isPaid have not changed
+    if (
+      currentOrder &&
+      currentOrder.status === status &&
+      currentOrder.isPaid === isPaid
+    ) {
+      console.log("No changes detected. Skipping update.");
+      return;
+    }
+
     setStatusUpdating(true);
+
     try {
       const token = localStorage.getItem("token");
       console.log("Sent status:", status, "Sent isPaid:", isPaid);
