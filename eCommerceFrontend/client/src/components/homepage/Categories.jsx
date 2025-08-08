@@ -172,6 +172,8 @@ const PrevArrow = ({ onClick }) => (
 
 const Categories = () => {
   const { categories } = useCategory();
+  console.log(categories);
+
   const navigate = useNavigate();
 
   const settings = {

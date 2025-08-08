@@ -31,6 +31,7 @@ const OrderDetailsPage = () => {
     const fetchOrder = async () => {
       try {
         const res = await fetch(
+          // ${import.meta.env.VITE_API_URL}
           `${import.meta.env.VITE_API_URL}/api/orders/my-orders/${id}`,
           {
             headers: {
@@ -327,7 +328,7 @@ const OrderDetailsPage = () => {
                         )}
                       </>
                     ))} */}
-                  {isReturnEligible(order.createdAt) &&
+                  {/* {isReturnEligible(order.createdAt) &&
                     (item.returnRequest && item?.returnRequest?.isDelivered ? (
                       <button
                         disabled
@@ -352,10 +353,10 @@ const OrderDetailsPage = () => {
                             return (
                               <button
                                 disabled
-                                className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-yellow-100 text-yellow-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-yellow-300 shadow-sm"
+                                className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 mt-2 ml-1 sm:ml-2 rounded-full bg-yellow-100 text-yellow-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-yellow-300 shadow-sm text-center"
                               >
                                 <FaBoxOpen className="text-sm" />
-                                <span className="tracking-wide">
+                                <span className="tracking-wide block sm:inline text-center">
                                   Return Request Submitted
                                 </span>
                               </button>
@@ -365,13 +366,14 @@ const OrderDetailsPage = () => {
                               <>
                                 <button
                                   disabled
-                                  className="inline-flex items-center gap-2 px-2 sm:px-3 py-1 sm:py-1.5 mt-2 ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm"
+                                  className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 mt-2 ml-1 sm:ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm text-center"
                                 >
                                   <FaBoxOpen className="text-sm" />
-                                  <span className="tracking-wide">
+                                  <span className="tracking-wide block sm:inline text-center">
                                     Pickup Scheduled
                                   </span>
                                 </button>
+
                                 {diffInMinutes <= 24 * 60 && (
                                   <p className="text-[11px] text-gray-500 mt-1">
                                     The product will be picked up within 24
@@ -394,6 +396,82 @@ const OrderDetailsPage = () => {
                         >
                           <FaUndoAlt className="text-sm" />
                           Return
+                        </button>
+                      )
+                    ))} */}
+                  {isReturnEligible(order.createdAt) &&
+                    (item.returnRequest && item?.returnRequest?.isDelivered ? (
+                      // ✅ Return Delivery Completed Button
+                      <button
+                        disabled
+                        className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 mt-2 ml-1 sm:ml-2 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm text-center"
+                      >
+                        <FaBoxOpen className="text-sm" />
+                        <span className="tracking-wide block sm:inline text-center">
+                          Return Delivery Completed
+                        </span>
+                      </button>
+                    ) : item?.returnRequest ? (
+                      // ✅ Return Requested / Pickup Scheduled Buttons
+                      <div className="mt-2 ml-1 sm:ml-2">
+                        {(() => {
+                          const requestTime = new Date(
+                            item.returnRequest.requestedAt
+                          );
+                          const now = new Date();
+                          const diffInMs = now - requestTime;
+                          const diffInMinutes = diffInMs / (1000 * 60);
+
+                          if (diffInMinutes < 2) {
+                            return (
+                              <button
+                                disabled
+                                className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-yellow-100 text-yellow-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-yellow-300 shadow-sm text-center"
+                              >
+                                <FaBoxOpen className="text-sm" />
+                                <span className="tracking-wide block sm:inline text-center">
+                                  Return Request Submitted
+                                </span>
+                              </button>
+                            );
+                          } else {
+                            return (
+                              <>
+                                <button
+                                  disabled
+                                  className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 rounded-full bg-green-100 text-green-700 text-[11px] sm:text-xs font-semibold cursor-not-allowed border border-green-300 shadow-sm text-center"
+                                >
+                                  <FaBoxOpen className="text-sm" />
+                                  <span className="tracking-wide block sm:inline text-center">
+                                    Pickup Scheduled
+                                  </span>
+                                </button>
+
+                                {diffInMinutes <= 24 * 60 && (
+                                  <p className="text-[11px] text-gray-500 mt-1 sm:mt-1.5 leading-tight">
+                                    The product will be picked up within 24
+                                    hours.
+                                  </p>
+                                )}
+                              </>
+                            );
+                          }
+                        })()}
+                      </div>
+                    ) : (
+                      // ✅ Return Action Button
+                      order.status === "Delivered" && (
+                        <button
+                          onClick={() => {
+                            setReturnItem(item);
+                            setShowModal(true);
+                          }}
+                          className="inline-flex flex-wrap items-center justify-center gap-1 px-2 py-1 sm:px-3 sm:py-1.5 mt-2 ml-1 sm:ml-2 rounded-full bg-red-100 text-red-600 text-[11px] sm:text-xs font-medium hover:bg-red-200 transition text-center"
+                        >
+                          <FaUndoAlt className="text-sm" />
+                          <span className="tracking-wide block sm:inline text-center">
+                            Return
+                          </span>
                         </button>
                       )
                     ))}

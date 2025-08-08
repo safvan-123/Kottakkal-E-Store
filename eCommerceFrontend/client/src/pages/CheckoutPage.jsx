@@ -6,8 +6,8 @@ import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { FaMapMarkerAlt } from "react-icons/fa";
 
+// const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
 const API_BASE_URL = `${import.meta.env.VITE_API_URL}`;
-// const API_BASE_URL = "http://localhost:5050";
 const CheckoutPage = () => {
   const { cartItems, cartTotal, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(1);
