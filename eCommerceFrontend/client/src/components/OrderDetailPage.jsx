@@ -180,9 +180,9 @@ const OrderDetailsPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in">
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-fade-in">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-4 sm:p-5 shadow-lg text-white mb-6">
+      <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-3 sm:p-5 shadow-lg text-white mb-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
           <div>
             <h2 className="text-xl sm:text-2xl font-bold">
