@@ -9,6 +9,23 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
+
+const MySwal = withReactContent(Swal);
+
+// 🔹 Mobile-friendly SweetAlert wrapper
+const showAlert = (options) => {
+  return MySwal.fire({
+    ...options,
+    width: window.innerWidth < 480 ? "90%" : "400px", // ✅ smaller width on mobile
+    customClass: {
+      popup: "rounded-xl text-sm md:text-base",
+      confirmButton: "px-4 py-2 text-sm md:text-base",
+      cancelButton: "px-4 py-2 text-sm md:text-base",
+    },
+  });
+};
 
 const CartPage = () => {
   const {
@@ -22,6 +39,7 @@ const CartPage = () => {
   } = useCart();
 
   const navigate = useNavigate();
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
@@ -32,25 +50,68 @@ const CartPage = () => {
       currency: "INR",
     }).format(price);
 
+  // ✅ Handle increase/decrease with SweetAlert
   const handleQuantity = (id, quantity, type) => {
     const newQty = type === "increase" ? quantity + 1 : quantity - 1;
     if (newQty < 1) {
-      if (window.confirm("Remove this item?")) removeFromCart(id);
+      showAlert({
+        title: "Remove this item?",
+        text: "This product will be deleted from your cart.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, remove it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          removeFromCart(id);
+          showAlert({
+            title: "Removed!",
+            text: "Item has been removed from your cart.",
+            icon: "success",
+          });
+        }
+      });
     } else {
       updateCartQuantity(id, newQty);
     }
   };
 
+  // ✅ Handle single item remove with SweetAlert
+  const handleRemoveItem = (id) => {
+    showAlert({
+      title: "Are you sure?",
+      text: "Do you really want to remove this item from your cart?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, remove it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeFromCart(id);
+        showAlert({
+          title: "Removed!",
+          text: "Item has been deleted from your cart.",
+          icon: "success",
+        });
+      }
+    });
+  };
+
+  // ✅ Loading state
   if (loadingCart)
     return (
       <div className="text-center py-20 text-gray-500">Loading cart...</div>
     );
 
+  // ✅ Error state
   if (cartError)
     return (
       <div className="text-center py-20 text-red-500">Error: {cartError}</div>
     );
 
+  // ✅ Empty cart state
   if (cartItems.length === 0)
     return (
       <motion.div
@@ -74,6 +135,7 @@ const CartPage = () => {
       </motion.div>
     );
 
+  // ✅ Main cart page
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 font-sans">
       {/* Animated Heading */}
@@ -89,10 +151,9 @@ const CartPage = () => {
         </h1>
       </motion.div>
 
-      {/* Flex Layout for Responsive Design */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Cart Items Section */}
-        <div className="w-full lg:w-2/3 grid grid-cols-2 gap-4 sm:gap-6">
+        <div className="w-full lg:w-full grid grid-cols-2 gap-4 sm:gap-6">
           {cartItems.map(
             ({ _id, product, quantity, size, color, subTotal }) => {
               const hasOffer =
@@ -106,6 +167,7 @@ const CartPage = () => {
                   transition={{ duration: 0.3 }}
                   className="bg-white border border-gray-200 shadow rounded-xl p-2 sm:p-3 flex flex-col gap-2 hover:shadow-md transition"
                 >
+                  {/* Product Image */}
                   <Link
                     to={`/product/${product._id}`}
                     className="w-full h-32 sm:h-44 rounded-lg overflow-hidden bg-gray-100 relative flex justify-center"
@@ -113,10 +175,11 @@ const CartPage = () => {
                     <img
                       src={product.imageUrl || "/images/default-product.png"}
                       alt={product.name}
-                      className="w-30  h-full object-cover object-center"
+                      className="w-30 h-full object-cover object-center"
                     />
                   </Link>
 
+                  {/* Product Info */}
                   <div className="flex-1 flex flex-col justify-between text-sm">
                     <div>
                       <Link
@@ -162,6 +225,7 @@ const CartPage = () => {
                       </div>
                     </div>
 
+                    {/* Quantity + Delete */}
                     <div className="flex flex-wrap items-center justify-between mt-3 gap-2">
                       <div className="flex items-center gap-2 bg-gray-100 px-2 py-1 rounded-md">
                         <button
@@ -181,13 +245,12 @@ const CartPage = () => {
                         </button>
                       </div>
 
-                      {/* Price and Trash icon on opposite ends */}
                       <div className="flex items-center justify-between w-full mt-2">
                         <span className="font-semibold text-gray-800 text-sm">
                           {formatPrice(subTotal)}
                         </span>
                         <button
-                          onClick={() => removeFromCart(_id)}
+                          onClick={() => handleRemoveItem(_id)} // ✅ SweetAlert confirm
                           className="p-1 rounded-md hover:bg-red-100 transition text-red-600"
                           title="Remove"
                         >
@@ -201,17 +264,28 @@ const CartPage = () => {
             }
           )}
 
-          {/* Clear Cart Button */}
+          {/* ✅ Clear Cart Button */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => {
-              if (
-                window.confirm(
-                  "Are you sure you want to clear your entire cart?"
-                )
-              ) {
-                clearCart();
-              }
+              showAlert({
+                title: "Clear entire cart?",
+                text: "This will remove all items from your cart.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, clear it!",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  clearCart();
+                  showAlert({
+                    title: "Cleared!",
+                    text: "Your cart is now empty.",
+                    icon: "success",
+                  });
+                }
+              });
             }}
             className="col-span-2 mt-4 w-full flex items-center justify-center gap-2 bg-red-600 text-white font-semibold py-2.5 rounded-lg hover:bg-red-700 transition"
           >
@@ -220,12 +294,12 @@ const CartPage = () => {
           </motion.button>
         </div>
 
-        {/* Order Summary Section */}
+        {/* ✅ Order Summary */}
         <motion.div
           initial={{ x: 50, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4 }}
-          className="w-full lg:w-1/3 bg-white border border-gray-200 p-5 rounded-xl shadow-md h-fit"
+          className="w-full lg:w-1/2 bg-white border border-gray-200 p-5 rounded-xl shadow-md h-fit"
         >
           <h2 className="text-lg font-semibold mb-4 text-gray-800">
             Order Summary
