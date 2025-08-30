@@ -178,7 +178,7 @@ export const registerController = async (req, res) => {
 //     });
 //   }
 // };
-
+//
 export const loginController = async (req, res) => {
   try {
     const { contact, password } = req.body;
