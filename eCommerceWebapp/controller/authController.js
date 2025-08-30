@@ -100,14 +100,93 @@ export const registerController = async (req, res) => {
   }
 };
 
+// export const loginController = async (req, res) => {
+//   try {
+//     const { contact, password } = req.body; // contact = email or phone
+
+//     if (!contact || !password) {
+//       return res.status(400).send({
+//         success: false,
+//         message: "Email or phone and password are required",
+//       });
+//     }
+
+//     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//     const query = emailRegex.test(contact)
+//       ? { email: contact.toLowerCase().trim() }
+//       : { phone: contact.trim() };
+
+//     // Check user
+//     const user = await userModel.findOne(query);
+//     console.log("find user", user);
+
+//     if (!user) {
+//       return res.status(404).send({
+//         success: false,
+//         message: "Account not found. Please register.",
+//       });
+//     }
+
+//     // Disallow traditional login for Google users
+//     if (user.isGoogleUser) {
+//       return res.status(401).send({
+//         success: false,
+//         message:
+//           'This account was registered with Google. Please use "Sign in with Google".',
+//       });
+//     }
+
+//     // Compare password
+//     const match = await comparePassword(password, user.password);
+//     console.log("🧠 Comparing:", password, "vs", user.password);
+//     console.log("🔍 Match result:", match);
+
+//     if (!match) {
+//       console.log("❌ Invalid password for:", contact);
+//       return res.status(401).send({
+//         success: false,
+//         message: "Invalid password",
+//       });
+//     }
+
+//     // Generate token
+//     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "7d",
+//     });
+
+//     res.status(200).send({
+//       success: true,
+//       message: "Login successful",
+//       user: {
+//         _id: user._id,
+//         name: user.name,
+//         ...(user.email ? { email: user.email } : {}),
+//         ...(user.phone ? { phone: user.phone } : {}),
+//         address: user.address,
+//         role: user.role,
+//         blocked: user.blocked,
+//         isGoogleUser: user.isGoogleUser,
+//       },
+//       token,
+//     });
+//   } catch (error) {
+//     console.log("❌ Login error:", error);
+//     res.status(500).send({
+//       success: false,
+//       message: "Error in login",
+//       error: error.message,
+//     });
+//   }
+// };
+
 export const loginController = async (req, res) => {
   try {
-    const { contact, password } = req.body; // contact = email or phone
+    const { contact, password } = req.body;
 
     if (!contact || !password) {
       return res.status(400).send({
         success: false,
-        message: "Email or phone and password are required",
+        message: "Email/phone and password are required",
       });
     }
 
@@ -117,10 +196,8 @@ export const loginController = async (req, res) => {
       ? { email: contact.toLowerCase().trim() }
       : { phone: contact.trim() };
 
-    // Check user
+    // Find user
     const user = await userModel.findOne(query);
-    console.log("find user", user);
-
     if (!user) {
       return res.status(404).send({
         success: false,
@@ -128,7 +205,7 @@ export const loginController = async (req, res) => {
       });
     }
 
-    // Disallow traditional login for Google users
+    // Disallow password login for Google accounts
     if (user.isGoogleUser) {
       return res.status(401).send({
         success: false,
@@ -139,36 +216,50 @@ export const loginController = async (req, res) => {
 
     // Compare password
     const match = await comparePassword(password, user.password);
-    console.log("🧠 Comparing:", password, "vs", user.password);
-    console.log("🔍 Match result:", match);
-
     if (!match) {
-      console.log("❌ Invalid password for:", contact);
       return res.status(401).send({
         success: false,
         message: "Invalid password",
       });
     }
 
-    // Generate token
-    const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+    // ✅ Generate short-lived Access Token
+    const accessToken = JWT.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "15m" } // only valid for 15 minutes
+    );
+
+    // ✅ Generate long-lived Refresh Token
+    const refreshToken = JWT.sign(
+      { _id: user._id },
+      process.env.JWT_REFRESH_SECRET,
+      { expiresIn: "7d" } // valid for 7 days
+    );
+
+    // Store refresh token in httpOnly cookie (secure from JS access)
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // use HTTPS in prod
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
+    // Send response with access token + user data
     res.status(200).send({
       success: true,
       message: "Login successful",
       user: {
         _id: user._id,
         name: user.name,
-        ...(user.email ? { email: user.email } : {}),
-        ...(user.phone ? { phone: user.phone } : {}),
+        email: user.email,
+        phone: user.phone,
         address: user.address,
         role: user.role,
         blocked: user.blocked,
         isGoogleUser: user.isGoogleUser,
       },
-      token,
+      accessToken, // frontend will use this
     });
   } catch (error) {
     console.log("❌ Login error:", error);
@@ -180,7 +271,41 @@ export const loginController = async (req, res) => {
   }
 };
 
-//forgot password controller
+// ✅ Refresh Token Controller
+export const refreshTokenController = async (req, res) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      return res
+        .status(401)
+        .json({ success: false, message: "No refresh token" });
+    }
+
+    JWT.verify(token, process.env.JWT_REFRESH_SECRET, (err, decoded) => {
+      if (err) {
+        return res
+          .status(403)
+          .json({ success: false, message: "Invalid refresh token" });
+      }
+
+      // Issue new access token
+      const newAccessToken = JWT.sign(
+        { _id: decoded._id },
+        process.env.JWT_SECRET,
+        { expiresIn: "15m" }
+      );
+
+      res.json({
+        success: true,
+        accessToken: newAccessToken,
+      });
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: "Error refreshing token", error });
+  }
+};
 
 // POST /api/v1/auth/forgot-password
 export const forgotPassword = async (req, res) => {

@@ -71,6 +71,7 @@ app.get("/", (req, res) => {
   console.log("GET / route hit");
   res.send("welcome ");
 });
+
 // const phone = "919876543210"; // ✅ your test phone number (no +, no space)
 // const message = "🔐 Reset your password: https://yourapp.com/reset/abc123";
 
